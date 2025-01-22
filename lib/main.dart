@@ -30,7 +30,7 @@ Future<Position> getPreciseLocation() async {
 
   // Get high-accuracy location
   return await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.bestForNavigation,  // Highest accuracy
+    desiredAccuracy: LocationAccuracy.bestForNavigation, // Highest accuracy
   );
 }
 
@@ -42,7 +42,8 @@ Future<void> requestLocationPermissions() async {
   }
 
   if (permission == LocationPermission.deniedForever) {
-    print('Location permissions are permanently denied. Please enable them in settings.');
+    print(
+        'Location permissions are permanently denied. Please enable them in settings.');
     await Geolocator.openAppSettings();
   }
 
@@ -52,69 +53,85 @@ Future<void> requestLocationPermissions() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<String> items = [
+    'Classroom 1', // First item
+    'Classroom 2', // Second item
+    'Classroom 3', // Third item
+  ];
+
+  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Classroom Compass',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Classroom Compass'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Text(
+            'Classroom Compass',
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: 'Search for Classroom',
+                  border: OutlineInputBorder(),
+                ),
+                style: TextStyle(fontSize: 30),
+              ),
+              Expanded(
+                child: Container(
+                  height: 150, // Set a fixed height for the ListView
+                  child: ListView.builder(
+                    itemCount: 3, // Number of items in the list
+                    itemBuilder: (context, index) {
+                      // Define the items in the list
+
+                      return ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            controller.text = items[index];
+                          });
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(child: Text(items[index])),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: SizedBox(
+          height: 100,
+          width: double.infinity,
+          child: Container(
+            margin: EdgeInsets.only(left: 25, right: 25, bottom: 8),
+            child: FloatingActionButton(
+              onPressed: () {},
+              backgroundColor: Colors.red,
+              child: Text("click", style: TextStyle(fontSize: 30)),
+            ),
+          ),
+        ),
       ),
     );
   }
