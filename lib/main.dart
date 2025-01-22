@@ -1,55 +1,23 @@
+import 'package:classroom_finder_app/ClassRoomLocator.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await requestLocationPermissions();
-  Position position = await getPreciseLocation();
-  print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
-  runApp(const MyApp());
-}
-
-Future<Position> getPreciseLocation() async {
-  bool serviceEnabled;
-  LocationPermission permission;
-
-  // Check if location services are enabled
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    return Future.error('Location services are disabled.');
-  }
-
-  // Check permissions
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return Future.error('Location permissions are denied');
-    }
-  }
-
-  // Get high-accuracy location
-  return await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.bestForNavigation,  // Highest accuracy
-  );
-}
-
-Future<void> requestLocationPermissions() async {
-  LocationPermission permission = await Geolocator.checkPermission();
-
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    print('Location permissions are permanently denied. Please enable them in settings.');
-    await Geolocator.openAppSettings();
-  }
-
-  if (permission == LocationPermission.whileInUse ||
-      permission == LocationPermission.always) {
-    print("Location permission granted");
-  }
+  runApp(MaterialApp(
+      title: 'Classroom Compass',
+      theme: ThemeData(
+        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        fontFamily: 'Montserrat',  // Set a custom font globally
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.black),
+          bodyMedium: TextStyle(fontSize: 16, color: Colors.black54),
+          bodySmall: TextStyle(fontSize: 14, color: Colors.grey),
+          headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ),
+      home: CompassPage(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
