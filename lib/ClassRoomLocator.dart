@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 
 class CompassPage extends StatefulWidget {
   const CompassPage({super.key});
@@ -33,7 +31,7 @@ class _CompassPageState extends State<CompassPage> {
                     children: [
                       Text('Heading: ${compass.heading.round()}'),
                       Transform.rotate(
-                        angle: compass.heading * -0.0174532925,
+                        angle: (compass.heading * -0.0174532925).roundToDouble(),
                         child: Icon(
                           Icons.arrow_upward_rounded,
                           size: MediaQuery.of(context).size.width - 80,
@@ -43,18 +41,18 @@ class _CompassPageState extends State<CompassPage> {
                   );
                 },
               ),
-              FutureBuilder(
-                future: LocationUtils.getPreciseLocation(), 
+              StreamBuilder(
+                stream: LocationUtils.getContinuousLocation(), 
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   }
-        
+
                   var position = snapshot.data;
-                  return Text("longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center,);
-                },
+                  return Text("longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center);
+                }
               ),
           ],
         ),
@@ -85,7 +83,9 @@ class LocationUtils {
 
     // Get high-accuracy location
     return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.bestForNavigation,  // Highest accuracy
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation, // Highest accuracy
+      ),
     );
   }
 
