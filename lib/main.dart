@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -61,13 +63,68 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<String> items = [
-    'Classroom 1', // First item
-    'Classroom 2', // Second item
-    'Classroom 3', // Third item
+  TextEditingController controller = TextEditingController();
+  List<String> classrooms = [
+    'Math',
+    'Science',
+    'History',
+    'English',
+    'Art',
+    'Music',
+    'Gym',
+    'Library',
+    'Computer Labdasdasdasdad',
+    'Cafeteria',
+    'Math',
+    'jda',
+    'dasdasdasdasdasdad',
+    'f',
+    'gasdasdasdasdasdasdasdasdasdasdasdakldakldjalkdjaskldjaslkdjaslkdasjdlkajdaskljdkalsjdalkdjaslk',
+    'h',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z'
   ];
+  List<String> filteredClassrooms = [];
 
-  final TextEditingController controller = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    filteredClassrooms = classrooms;
+    controller.addListener(() {
+      filterClassrooms();
+    });
+  }
+
+  void filterClassrooms() {
+    List<String> results = [];
+    if (controller.text.isEmpty) {
+      results = classrooms;
+    } else {
+      results = classrooms
+          .where((classroom) =>
+              classroom.toLowerCase().contains(controller.text.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      filteredClassrooms = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,21 +154,58 @@ class _MyAppState extends State<MyApp> {
                 child: Container(
                   height: 150, // Set a fixed height for the ListView
                   child: ListView.builder(
-                    itemCount: 3, // Number of items in the list
+                    itemCount: filteredClassrooms
+                        .length, // Number of items in the list
                     itemBuilder: (context, index) {
                       // Define the items in the list
+                      return Container(
+                          height: 70,
+                          margin: EdgeInsets.all(5),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[300],
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      Compass(
+                                          index: index,
+                                          filteredClassrooms:
+                                              filteredClassrooms),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.easeInOut;
 
-                      return ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            controller.text = items[index];
-                          });
-                        },
-                        child: Container(
-                          height: 50,
-                          child: Center(child: Text(items[index])),
-                        ),
-                      );
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+                                    var offsetAnimation =
+                                        animation.drive(tween);
+
+                                    return SlideTransition(
+                                      position: offsetAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  filteredClassrooms[index],
+                                  style: TextStyle(
+                                      fontSize: 30, color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ));
                     },
                   ),
                 ),
@@ -119,20 +213,50 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: SizedBox(
-          height: 100,
-          width: double.infinity,
-          child: Container(
-            margin: EdgeInsets.only(left: 25, right: 25, bottom: 8),
-            child: FloatingActionButton(
-              onPressed: () {},
-              backgroundColor: Colors.red,
-              child: Text("click", style: TextStyle(fontSize: 30)),
+      ),
+    );
+  }
+}
+
+class Compass extends StatefulWidget {
+  final int index;
+  final List<String> filteredClassrooms;
+
+  Compass({required this.index, required this.filteredClassrooms});
+
+  @override
+  State<Compass> createState() => _CompassState();
+}
+
+class _CompassState extends State<Compass> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: Text(
+          widget.filteredClassrooms[widget.index],
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Define the action when the text is clicked
+              print('Text clicked');
+            },
+            child: Text(
+              'Se Kort',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.white,
+              ),
             ),
           ),
-        ),
+        ],
       ),
+      body: Text("data"),
     );
   }
 }
