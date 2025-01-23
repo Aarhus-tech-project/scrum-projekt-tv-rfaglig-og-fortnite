@@ -1,4 +1,6 @@
 PODS:
+  - compassx (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - geolocator_apple (1.2.0):
     - Flutter
@@ -6,11 +8,14 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - compassx (from `.symlinks/plugins/compassx/ios`)
   - Flutter (from `Flutter`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
 
 EXTERNAL SOURCES:
+  compassx:
+    :path: ".symlinks/plugins/compassx/ios"
   Flutter:
     :path: Flutter
   geolocator_apple:
@@ -19,6 +24,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sensors_plus/ios"
 
 SPEC CHECKSUMS:
+  compassx: 2d291f8c8e5672f35c62277f2318ef48359dc1d0
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   geolocator_apple: 1560c3c875af2a412242c7a923e15d0d401966ff
   sensors_plus: 6a11ed0c2e1d0bd0b20b4029d3bad27d96e0c65b

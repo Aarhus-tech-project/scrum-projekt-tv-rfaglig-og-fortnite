@@ -1,37 +1,10 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
 
+import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-
-class ClassCompass extends StatefulWidget {
-  const ClassCompass({super.key});
-
-  @override
-  State<ClassCompass> createState() => _ClassCompassState();
-}
-
-class _ClassCompassState extends State<ClassCompass> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: FutureBuilder(
-          future: LocationUtils.getPreciseLocation(), 
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            }
-
-            var position = snapshot.data;
-            return Text("longitude: ${position?.longitude}, latitude: ${position?.latitude}\n Angle: ${Geolocator.distanceBetween(position!.longitude, position.latitude, 0, 0)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center,);
-          },
-        ),
-    );
-  }
-}
 
 class CompassPage extends StatefulWidget {
   const CompassPage({super.key});
@@ -41,60 +14,52 @@ class CompassPage extends StatefulWidget {
 }
 
 class _CompassPageState extends State<CompassPage> {
-  double _heading = 0.0;
-  StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-    startCompass();
-  }
-
-  void startCompass() {
-    _magnetometerSubscription = magnetometerEventStream().listen((MagnetometerEvent event) {
-      double x = event.x;
-      double y = event.y;
-
-      // Calculate heading in degrees (0 = North, 90 = East, etc.)
-      double heading = atan2(y, x) * (180 / pi);
-
-      // Normalize to 0-360 degrees
-      if (heading < 0) {
-        heading += 360;
-      }
-
-      setState(() {
-        _heading = heading;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _magnetometerSubscription?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Compass Example")),
+      appBar: AppBar(title: Text("Absolute Compass Heading")),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Compass Heading:',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              '${_heading.toStringAsFixed(2)}°',
-              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.blue),
-            ),
+            StreamBuilder<CompassXEvent>(
+                stream: CompassX.events,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const Text('No data');
+                  final compass = snapshot.data!;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Heading: ${compass.heading}'),
+                      Transform.rotate(
+                        angle: compass.heading * -0.0174532925,
+                        child: Icon(
+                          Icons.arrow_upward_rounded,
+                          size: MediaQuery.of(context).size.width - 80,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              FutureBuilder(
+                future: LocationUtils.getPreciseLocation(), 
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  }
+        
+                  var position = snapshot.data;
+                  return Text("longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center,);
+                },
+              ),
           ],
         ),
       ),
-    );
+      );
   }
 }
 
