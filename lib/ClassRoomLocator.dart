@@ -31,7 +31,7 @@ class _CompassPageState extends State<CompassPage> {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Heading: ${compass.heading}'),
+                      Text('Heading: ${compass.heading.round()}'),
                       Transform.rotate(
                         angle: compass.heading * -0.0174532925,
                         child: Icon(
