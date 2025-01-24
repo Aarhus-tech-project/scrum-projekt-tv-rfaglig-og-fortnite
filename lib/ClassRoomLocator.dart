@@ -12,6 +12,14 @@ class CompassPage extends StatefulWidget {
 }
 
 class _CompassPageState extends State<CompassPage> {
+  double angleToTarget = 0.0; // Angle in degress offset from north to target
+
+  double startLatitude = 56.11370211968747;
+  double startLongtitude = 10.126561169173625;
+
+  double targetLatitude = 56.11374204896286;
+  double targetLongtitude = 10.126310686422762;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,12 +34,19 @@ class _CompassPageState extends State<CompassPage> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const Text('No data');
                   final compass = snapshot.data!;
+
+                  double newHeading = (compass.heading + angleToTarget - 90) % 360;
+                  if (newHeading < 0) {
+                    newHeading += 360;
+                  }
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Heading: ${compass.heading.round()}'),
+                      Text('Angle To Target: ${angleToTarget.round()}'),
+                      Text('Compass Heading: ${compass.heading.round()}'),
+                      Text('New Heading: ${newHeading.round()}'),
                       Transform.rotate(
-                        angle: (compass.heading * -0.0174532925),
+                        angle: (-newHeading * 0.0174532925),
                         child: Icon(
                           Icons.arrow_upward_rounded,
                           size: MediaQuery.of(context).size.width - 80,
@@ -51,6 +66,9 @@ class _CompassPageState extends State<CompassPage> {
                   }
 
                   var position = snapshot.data;
+                  
+                  angleToTarget = Geolocator.bearingBetween(position!.latitude, position!.longitude, targetLatitude, targetLongtitude);
+
                   return Text("longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center);
                 }
               ),
@@ -93,7 +111,7 @@ class LocationUtils {
     return Geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,  // High accuracy
-        distanceFilter: 1,
+        distanceFilter: 3,
       ),
     );
   }
