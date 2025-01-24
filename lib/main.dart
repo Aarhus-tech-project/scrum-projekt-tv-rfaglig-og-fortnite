@@ -1,13 +1,13 @@
 import 'dart:math';
 
+import 'package:classroom_finder_app/CompassPage.dart';
+import 'package:classroom_finder_app/DistanceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await requestLocationPermissions();
-  Position position = await getPreciseLocation();
-  print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+
   runApp(const MyApp());
 }
 
@@ -64,42 +64,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController controller = TextEditingController();
-  List<String> classrooms = [
-    'Math',
-    'Science',
-    'History',
-    'English',
-    'Art',
-    'Music',
-    'Gym',
-    'Library',
-    'Computer Labdasdasdasdad',
-    'Cafeteria',
-    'Math',
-    'jda',
-    'dasdasdasdasdasdad',
-    'f',
-    'gasdasdasdasdasdasdasdasdasdasdasdakldakldjalkdjaskldjaslkdjaslkdasjdlkajdaskljdkalsjdalkdjaslk',
-    'h',
-    'j',
-    'k',
-    'l',
-    'm',
-    'n',
-    'o',
-    'p',
-    'q',
-    'r',
-    's',
-    't',
-    'u',
-    'v',
-    'w',
-    'x',
-    'y',
-    'z'
+  List<RoomLocation> classrooms = [
+    RoomLocation(name: "name", latitude: 0.0, longitude: 0.0, level: 1)
   ];
-  List<String> filteredClassrooms = [];
+  List<RoomLocation> filteredClassrooms = [];
 
   @override
   void initState() {
@@ -111,13 +79,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   void filterClassrooms() {
-    List<String> results = [];
+    List<RoomLocation> results = [];
     if (controller.text.isEmpty) {
       results = classrooms;
     } else {
       results = classrooms
-          .where((classroom) =>
-              classroom.toLowerCase().contains(controller.text.toLowerCase()))
+          .where((classroom) => classroom.name
+              .toLowerCase()
+              .contains(controller.text.toLowerCase()))
           .toList();
     }
 
@@ -171,10 +140,7 @@ class _MyAppState extends State<MyApp> {
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation,
                                           secondaryAnimation) =>
-                                      Compass(
-                                          index: index,
-                                          filteredClassrooms:
-                                              filteredClassrooms),
+                                      Compass(Room: filteredClassrooms[index]),
                                   transitionsBuilder: (context, animation,
                                       secondaryAnimation, child) {
                                     const begin = Offset(1.0, 0.0);
@@ -194,16 +160,23 @@ class _MyAppState extends State<MyApp> {
                                 ),
                               );
                             },
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  filteredClassrooms[index],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Icon(
+                                  Icons.room,
+                                  size: 25,
+                                  color: Colors.black,
+                                ),
+                                Text(
+                                  filteredClassrooms[index].name,
                                   style: TextStyle(
                                       fontSize: 30, color: Colors.black),
                                 ),
-                              ),
+                                Text("10m",
+                                    style: TextStyle(
+                                        fontSize: 30, color: Colors.black)),
+                              ],
                             ),
                           ));
                     },
@@ -214,49 +187,6 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class Compass extends StatefulWidget {
-  final int index;
-  final List<String> filteredClassrooms;
-
-  Compass({required this.index, required this.filteredClassrooms});
-
-  @override
-  State<Compass> createState() => _CompassState();
-}
-
-class _CompassState extends State<Compass> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text(
-          widget.filteredClassrooms[widget.index],
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // Define the action when the text is clicked
-              print('Text clicked');
-            },
-            child: Text(
-              'Se Kort',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                decoration: TextDecoration.underline,
-                decorationColor: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Text("data"),
     );
   }
 }
