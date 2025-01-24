@@ -31,7 +31,7 @@ class _CompassPageState extends State<CompassPage> {
                     children: [
                       Text('Heading: ${compass.heading.round()}'),
                       Transform.rotate(
-                        angle: (compass.heading * -0.0174532925).roundToDouble(),
+                        angle: (compass.heading * -0.0174532925),
                         child: Icon(
                           Icons.arrow_upward_rounded,
                           size: MediaQuery.of(context).size.width - 80,
