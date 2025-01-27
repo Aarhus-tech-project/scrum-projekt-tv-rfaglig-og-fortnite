@@ -21,31 +21,35 @@ class _CompassState extends State<Compass> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                // Define the action when the text is clicked
-                print('Text clicked');
-              },
-              child: Text(
-                'Se Kort',
-                style: TextStyle(
+                onPressed: () {
+                  // Define the action when the text is clicked
+                  print('Text clicked');
+                },
+                child: Icon(
+                  Icons.map,
+                  size: 40,
                   color: Colors.white,
-                  fontSize: 20,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white,
-                ),
-              ),
-            ),
+                )),
           ],
         ),
         body: Column(
           children: [
             Container(
-              color: Colors.grey,
+              color: Colors.grey[300],
               width: double.infinity,
-              height: 200,
+              height: 150,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [Text("Lokale AS106"), Text("Etage 3")],
+                children: [
+                  Text(
+                    "Lokale: AS106",
+                    style: TextStyle(
+                        fontSize: 30, decoration: TextDecoration.underline),
+                  ),
+                  Text("Etage 3",
+                      style: TextStyle(
+                          fontSize: 30, decoration: TextDecoration.underline))
+                ],
               ),
             ),
             Expanded(
@@ -64,7 +68,8 @@ class _CompassState extends State<Compass> {
           children: [
             Text(
               "Afstand 10m",
-              style: TextStyle(fontSize: 30),
+              style:
+                  TextStyle(fontSize: 30, decoration: TextDecoration.underline),
             ),
             Text("Etage 1", style: TextStyle(fontSize: 30))
           ],
