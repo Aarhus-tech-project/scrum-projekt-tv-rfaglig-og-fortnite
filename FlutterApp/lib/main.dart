@@ -5,6 +5,8 @@ import 'package:classroom_finder_app/DistanceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import 'services/classroom_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -64,15 +66,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController controller = TextEditingController();
-  List<RoomLocation> classrooms = [
-    RoomLocation(name: "name", latitude: 0.0, longitude: 0.0, level: 1)
-  ];
+  List<RoomLocation> classrooms = [];
   List<RoomLocation> filteredClassrooms = [];
+  late Future<List<RoomLocation>> futureClassrooms;
 
   @override
   void initState() {
     super.initState();
-    filteredClassrooms = classrooms;
+
+    futureClassrooms = ClassroomService().fetchClassrooms();
+    futureClassrooms.then((data) {
+      setState(() {
+        classrooms = data;
+        filteredClassrooms = classrooms;
+      });
+    });
     controller.addListener(() {
       filterClassrooms();
     });

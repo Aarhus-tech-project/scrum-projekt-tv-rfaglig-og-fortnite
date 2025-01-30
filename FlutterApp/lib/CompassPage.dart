@@ -42,11 +42,11 @@ class _CompassState extends State<Compass> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    "Lokale: AS106",
+                    widget.Room.name,
                     style: TextStyle(
                         fontSize: 30, decoration: TextDecoration.underline),
                   ),
-                  Text("Etage 3",
+                  Text("Etage ${widget.Room.level}",
                       style: TextStyle(
                           fontSize: 30, decoration: TextDecoration.underline))
                 ],
