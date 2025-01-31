@@ -1,14 +1,13 @@
-using MongoDB.Bson;
-using MongoDB.Driver;
+using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
-using DotNetBackend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Get connection string from appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("MySQL");
+
+// Register MySqlConnection as a service
+builder.Services.AddTransient<MySqlConnection>(_ => new MySqlConnection(connectionString));
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -24,46 +23,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
 
-// Use specific CORS policy
-app.UseCors("AllowAllOrigins");
+MySqlConnection connection = new MySqlConnection(connectionString);
 
-// MongoDB connection
-var mongoClient = new MongoClient("mongodb+srv://Peter:scMttGq4JMvhJWHb@myweb.7styx.mongodb.net/my_test_database?retryWrites=true&w=majority");
-var database = mongoClient.GetDatabase("my_test_database");
-var collection = database.GetCollection<BsonDocument>("classrooms");
+connection.Open();
 
-app.MapGet("/classrooms", async () =>
-{
-    var classrooms = await collection.Find(new BsonDocument()).ToListAsync();
-    var classroomList = new List<Classroom>();
+DatabaseHelper databasehelper = new DatabaseHelper(connection);
 
-    foreach (var classroom in classrooms)
-    {
-        classroom.TryGetValue("ClassroomName", out var ClassroomName);
-        classroom.TryGetValue("Level", out var level);
-        classroom.TryGetValue("Latitude", out var latitude);
-        classroom.TryGetValue("Longitude", out var longitude);
-        classroom.TryGetValue("Altitude", out var altitude);
-
-        classroomList.Add(new Classroom
-        {
-            ClassroomName = ClassroomName?.ToString() ?? string.Empty,
-            Level = level?.ToInt32() ?? 0,
-            Latitude = latitude?.ToDouble() ?? 0.0,
-            Longitude = longitude?.ToDouble() ?? 0.0,
-            Altitude = altitude?.ToDouble() ?? 0.0
-        });
-    }
-
-    return Results.Ok(classroomList);
-});
+var a = databasehelper.GetVariable("rooms", "name");
 
 app.Run();
