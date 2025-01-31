@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-public class DataModel
+public class RoomsDataModel
 
 {
  [Key] public int id {get; set;}
