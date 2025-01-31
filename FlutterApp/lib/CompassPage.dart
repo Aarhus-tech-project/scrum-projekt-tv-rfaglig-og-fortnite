@@ -1,4 +1,4 @@
-import 'package:classroom_finder_app/DistanceClass.dart';
+import 'package:classroom_finder_app/RoomLocation.dart';
 import 'package:flutter/material.dart';
 
 class Compass extends StatefulWidget {

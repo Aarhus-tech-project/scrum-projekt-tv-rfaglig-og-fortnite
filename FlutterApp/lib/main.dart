@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:classroom_finder_app/CompassPage.dart';
-import 'package:classroom_finder_app/DistanceClass.dart';
+import 'package:classroom_finder_app/RoomLocation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
 import 'services/classroom_service.dart';
 
 void main() async {
@@ -65,42 +64,41 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  TextEditingController controller = TextEditingController();
   List<RoomLocation> classrooms = [];
   List<RoomLocation> filteredClassrooms = [];
   late Future<List<RoomLocation>> futureClassrooms;
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    futureClassrooms = ClassroomService().fetchClassrooms();
-    futureClassrooms.then((data) {
-      setState(() {
-        classrooms = data;
-        filteredClassrooms = classrooms;
-      });
-    });
+    loadInitialClassrooms();
     controller.addListener(() {
       filterClassrooms();
     });
   }
 
-  void filterClassrooms() {
-    List<RoomLocation> results = [];
-    if (controller.text.isEmpty) {
-      results = classrooms;
-    } else {
-      results = classrooms
-          .where((classroom) => classroom.name
-              .toLowerCase()
-              .contains(controller.text.toLowerCase()))
-          .toList();
-    }
-
+  void loadInitialClassrooms() async {
+    List<RoomLocation> initialClassrooms =
+        await ClassroomService.fetchClassrooms();
     setState(() {
-      filteredClassrooms = results;
+      classrooms = initialClassrooms.take(5).toList();
+      filteredClassrooms = classrooms;
     });
+  }
+
+  void filterClassrooms() async {
+    if (controller.text.isEmpty) {
+      setState(() {
+        filteredClassrooms = classrooms;
+      });
+    } else {
+      List<RoomLocation> results = await ClassroomService.fetchClassrooms(
+          keyword: controller.text, limit: 5);
+      setState(() {
+        filteredClassrooms = results;
+      });
+    }
   }
 
   @override

@@ -30,34 +30,35 @@ class _CompassPageState extends State<CompassPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             StreamBuilder<CompassXEvent>(
-                stream: CompassX.events,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const Text('No data');
-                  final compass = snapshot.data!;
+              stream: CompassX.events,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const Text('No data');
+                final compass = snapshot.data!;
 
-                  double newHeading = (compass.heading + angleToTarget - 90) % 360;
-                  if (newHeading < 0) {
-                    newHeading += 360;
-                  }
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Angle To Target: ${angleToTarget.round()}'),
-                      Text('Compass Heading: ${compass.heading.round()}'),
-                      Text('New Heading: ${newHeading.round()}'),
-                      Transform.rotate(
-                        angle: (-newHeading * 0.0174532925),
-                        child: Icon(
-                          Icons.arrow_upward_rounded,
-                          size: MediaQuery.of(context).size.width - 80,
-                        ),
+                double newHeading =
+                    (compass.heading + angleToTarget - 90) % 360;
+                if (newHeading < 0) {
+                  newHeading += 360;
+                }
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Angle To Target: ${angleToTarget.round()}'),
+                    Text('Compass Heading: ${compass.heading.round()}'),
+                    Text('New Heading: ${newHeading.round()}'),
+                    Transform.rotate(
+                      angle: (-newHeading * 0.0174532925),
+                      child: Icon(
+                        Icons.arrow_upward_rounded,
+                        size: MediaQuery.of(context).size.width - 80,
                       ),
-                    ],
-                  );
-                },
-              ),
-              StreamBuilder(
-                stream: LocationUtils.getContinuousLocation(), 
+                    ),
+                  ],
+                );
+              },
+            ),
+            StreamBuilder(
+                stream: LocationUtils.getContinuousLocation(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
@@ -66,16 +67,19 @@ class _CompassPageState extends State<CompassPage> {
                   }
 
                   var position = snapshot.data;
-                  
-                  angleToTarget = Geolocator.bearingBetween(position!.latitude, position!.longitude, targetLatitude, targetLongtitude);
 
-                  return Text("longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}", style: TextStyle(fontSize: 24), textAlign: TextAlign.center);
-                }
-              ),
+                  angleToTarget = Geolocator.bearingBetween(position!.latitude,
+                      position!.longitude, targetLatitude, targetLongtitude);
+
+                  return Text(
+                      "longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}",
+                      style: TextStyle(fontSize: 24),
+                      textAlign: TextAlign.center);
+                }),
           ],
         ),
       ),
-      );
+    );
   }
 }
 
@@ -110,7 +114,7 @@ class LocationUtils {
   static Stream<Position> getContinuousLocation() {
     return Geolocator.getPositionStream(
       locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,  // High accuracy
+        accuracy: LocationAccuracy.bestForNavigation, // High accuracy
         distanceFilter: 3,
       ),
     );
