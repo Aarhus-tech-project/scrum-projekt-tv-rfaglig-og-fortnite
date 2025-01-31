@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../DistanceClass.dart';
+import '../RoomLocation.dart';
 
 class ClassroomService {
   static const String _baseUrl = 'http://localhost:5126';
