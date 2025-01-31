@@ -67,7 +67,7 @@ class _CompassState extends State<Compass> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              "Afstand 10m",
+              "Latitude: ${widget.Room.latitude}'\nLongitude: ${widget.Room.longitude}\nAltitude: ${widget.Room.altitude}",
               style:
                   TextStyle(fontSize: 30, decoration: TextDecoration.underline),
             ),

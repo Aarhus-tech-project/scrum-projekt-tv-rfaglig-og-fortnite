@@ -6,5 +6,7 @@ namespace DotNetBackend.Models
         public int Level { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        public double Altitude { get; set; }
     }
 }

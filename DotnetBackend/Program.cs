@@ -47,19 +47,19 @@ app.MapGet("/classrooms", async () =>
 
     foreach (var classroom in classrooms)
     {
-        classroom.TryGetValue("_id", out var id);
         classroom.TryGetValue("ClassroomName", out var ClassroomName);
         classroom.TryGetValue("Level", out var level);
         classroom.TryGetValue("Latitude", out var latitude);
         classroom.TryGetValue("Longitude", out var longitude);
+        classroom.TryGetValue("Altitude", out var altitude);
 
         classroomList.Add(new Classroom
         {
-
             ClassroomName = ClassroomName?.ToString() ?? string.Empty,
             Level = level?.ToInt32() ?? 0,
             Latitude = latitude?.ToDouble() ?? 0.0,
-            Longitude = longitude?.ToDouble() ?? 0.0
+            Longitude = longitude?.ToDouble() ?? 0.0,
+            Altitude = altitude?.ToDouble() ?? 0.0
         });
     }
 
