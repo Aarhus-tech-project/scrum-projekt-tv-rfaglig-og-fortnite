@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:classroom_finder_app/CompassPage.dart';
-import 'package:classroom_finder_app/DistanceClass.dart';
+import 'package:classroom_finder_app/RoomLocation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
