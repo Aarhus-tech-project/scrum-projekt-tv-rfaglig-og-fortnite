@@ -7,7 +7,7 @@ class ClassroomService {
 
   Future<List<RoomLocation>> fetchClassrooms() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/classrooms'));
+      final response = await http.get(Uri.parse('$_baseUrl/api/classrooms'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
