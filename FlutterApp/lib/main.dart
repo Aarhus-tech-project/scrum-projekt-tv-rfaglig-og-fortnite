@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:classroom_finder_app/CompassPage.dart';
 import 'package:classroom_finder_app/RoomLocation.dart';
+import 'services/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'services/classroom_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +64,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   List<RoomLocation> classrooms = [];
   List<RoomLocation> filteredClassrooms = [];
-  late Future<List<RoomLocation>> futureClassrooms;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -80,9 +77,9 @@ class _MyAppState extends State<MyApp> {
 
   void loadInitialClassrooms() async {
     List<RoomLocation> initialClassrooms =
-        await ClassroomService.fetchClassrooms();
+        await ClassroomService.fetchClassrooms(limit: 5);
     setState(() {
-      classrooms = initialClassrooms.take(5).toList();
+      classrooms = initialClassrooms;
       filteredClassrooms = classrooms;
     });
   }
@@ -93,8 +90,14 @@ class _MyAppState extends State<MyApp> {
         filteredClassrooms = classrooms;
       });
     } else {
-      List<RoomLocation> results = await ClassroomService.fetchClassrooms(
-          keyword: controller.text, limit: 5);
+      List<RoomLocation> allClassrooms =
+          await ClassroomService.fetchClassrooms();
+      List<RoomLocation> results = allClassrooms
+          .where((classroom) => classroom.name
+              .toLowerCase()
+              .contains(controller.text.toLowerCase()))
+          .take(5)
+          .toList();
       setState(() {
         filteredClassrooms = results;
       });

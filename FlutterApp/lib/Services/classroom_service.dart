@@ -14,6 +14,7 @@ class ClassroomService {
       };
       final uri = Uri.parse('$_baseUrl/api/classrooms')
           .replace(queryParameters: queryParameters);
+
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
