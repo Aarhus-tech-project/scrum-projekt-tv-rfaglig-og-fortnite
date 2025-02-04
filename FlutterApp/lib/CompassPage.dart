@@ -6,7 +6,7 @@ import 'dart:async';
 
 class Compass extends StatefulWidget {
   final RoomLocation Room;
-  Compass({required this.Room});
+  const Compass({super.key, required this.Room});
 
   @override
   State<Compass> createState() => _CompassState();
@@ -111,12 +111,12 @@ class _CompassState extends State<Compass> {
 
                           angleToTarget = Geolocator.bearingBetween(
                               position!.latitude,
-                              position!.longitude,
+                              position.longitude,
                               targetLatitude,
                               targetLongtitude);
 
                           return Text(
-                              "longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}",
+                              "longitude: ${position.longitude.toStringAsFixed(8)}\n latitude: ${position.latitude.toStringAsFixed(8)}\n altitude: ${position.altitude.toStringAsFixed(2)}",
                               style: TextStyle(fontSize: 24),
                               textAlign: TextAlign.center);
                         }),

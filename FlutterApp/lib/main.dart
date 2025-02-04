@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                 style: TextStyle(fontSize: 30),
               ),
               Expanded(
-                child: Container(
+                child: SizedBox(
                   height: 150, // Set a fixed height for the ListView
                   child: ListView.builder(
                     itemCount: filteredClassrooms

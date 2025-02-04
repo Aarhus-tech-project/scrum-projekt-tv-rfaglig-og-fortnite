@@ -69,10 +69,10 @@ class _CompassPageState extends State<CompassPage> {
                   var position = snapshot.data;
 
                   angleToTarget = Geolocator.bearingBetween(position!.latitude,
-                      position!.longitude, targetLatitude, targetLongtitude);
+                      position.longitude, targetLatitude, targetLongtitude);
 
                   return Text(
-                      "longitude: ${position?.longitude.toStringAsFixed(8)}\n latitude: ${position?.latitude.toStringAsFixed(8)}\n altitude: ${position?.altitude.toStringAsFixed(2)}",
+                      "longitude: ${position.longitude.toStringAsFixed(8)}\n latitude: ${position.latitude.toStringAsFixed(8)}\n altitude: ${position.altitude.toStringAsFixed(2)}",
                       style: TextStyle(fontSize: 24),
                       textAlign: TextAlign.center);
                 }),
