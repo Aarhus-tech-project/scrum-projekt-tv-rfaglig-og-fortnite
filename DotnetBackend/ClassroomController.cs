@@ -6,16 +6,21 @@ using MySql.Data.MySqlClient;
 [Route("api")]
 public class ClassroomController : Controller
 {
-    MySqlContext mySqlContext;
+    private readonly ClassroomRepository classroomRepository;
+
+    public ClassroomController(ClassroomRepository classroomRepository)
+    {
+        this.classroomRepository = classroomRepository;
+    }
 
     [HttpGet("Classrooms")]
     public async Task<IActionResult> GetClassrooms()
     {
 
         var navn = new List<Dictionary<string, object>>();
-        navn = await mySqlContext.GetAllRowsAsync("rooms");
+        navn = await classroomRepository.GetAllRowsAsync("rooms");
 
-        mySqlContext.GetVariable("rooms", "1", "hans");
+        classroomRepository.GetVariable("rooms", "1", "hans");
 
         return Ok(navn);
 
@@ -24,7 +29,7 @@ public class ClassroomController : Controller
     [HttpPost("Classrooms")]
     public async Task<IActionResult> AddClassroom([FromBody] Room room)
     {
-        var result = await mySqlContext.AddClassroomAsync(room);
+        var result = await classroomRepository.AddClassroomAsync(room);
 
         return Ok();
     }
@@ -32,18 +37,11 @@ public class ClassroomController : Controller
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> GetClassroom()
     {
-        var row = await mySqlContext.GetRow("rooms");
+        var row = await classroomRepository.GetRow("rooms", 1);
 
         if (row == null)
             return NotFound("No data found");
 
         return Ok(row);
     }
-
-
-    public ClassroomController(MySqlContext mySqlContext)
-    {
-        this.mySqlContext = mySqlContext;
-    }
-
 }

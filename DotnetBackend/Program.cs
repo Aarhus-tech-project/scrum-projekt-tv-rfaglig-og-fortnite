@@ -4,8 +4,11 @@ using System;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("MySQL");
+
+string connectionString = builder.Configuration.GetConnectionString("MySQL") ?? throw(new KeyNotFoundException());
+
 builder.Services.AddSingleton(new MySqlContext(connectionString));
+builder.Services.AddScoped<ClassroomRepository>();
 
 // Get connection string from appsettings.json
 
