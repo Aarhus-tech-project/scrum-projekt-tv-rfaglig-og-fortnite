@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 USE classroomdatabase;
 
 CREATE TABLE `rooms` (
@@ -12,4 +10,3 @@ CREATE TABLE `rooms` (
   `site` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
->>>>>>> main
