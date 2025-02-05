@@ -1,12 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DotNetBackend.Models
 {
-    public class Classroom
-    {
-        public string? ClassroomName { get; set; }
-        public int Level { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
 
-        public double Altitude { get; set; }
+    public class Room
+    {
+        [Key] public int Id {get; set;}
+        required public string Name {get; set;}
+        required public double Lat {get; set;}
+        required public double Lon {get; set;}
+        required public double Alt {get; set;}
+        required public int Level {get; set;}
+        required public string Site {get; set;}
     }
 }
