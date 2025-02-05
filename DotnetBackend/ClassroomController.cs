@@ -35,7 +35,7 @@ public class ClassroomController : Controller
     }
 
     [HttpGet("SearchClassrooms")]
-    public async Task<IActionResult> GetClassroom()
+    public async Task<IActionResult> GetClassroom(string keyword = "", int limit = 10)
     {
         var row = await classroomRepository.GetRow(1);
 
