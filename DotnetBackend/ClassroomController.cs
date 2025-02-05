@@ -18,9 +18,9 @@ public class ClassroomController : Controller
     {
 
         var navn = new List<Dictionary<string, object>>();
-        navn = await classroomRepository.GetAllRowsAsync("rooms");
+        navn = await classroomRepository.GetAllRowsAsync();
 
-        classroomRepository.GetVariable("rooms", "1", "hans");
+        classroomRepository.GetVariable("1", "hans");
 
         return Ok(navn);
 
@@ -37,7 +37,7 @@ public class ClassroomController : Controller
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> GetClassroom()
     {
-        var row = await classroomRepository.GetRow("rooms", 1);
+        var row = await classroomRepository.GetRow(1);
 
         if (row == null)
             return NotFound("No data found");

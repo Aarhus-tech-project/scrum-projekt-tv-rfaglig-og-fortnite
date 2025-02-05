@@ -3,6 +3,8 @@ using MySql.Data.MySqlClient;
 
 public class ClassroomRepository
 {
+    private const string Rooms = "rooms";
+
     private readonly MySqlContext context;
 
     public ClassroomRepository(MySqlContext context)
@@ -10,9 +12,9 @@ public class ClassroomRepository
         this.context = context;
     }
 
-    public object GetVariable(string table, string column, string condition = "1=1")
+    public object GetVariable(string column, string condition = "1=1")
     {
-        string query = $"SELECT {column} FROM {table} WHERE {condition} LIMIT 1;";
+        string query = $"SELECT {column} FROM {Rooms} WHERE {condition} LIMIT 1;";
         object result = null;
 
         using (MySqlConnection connection = context.GetConnection())
@@ -30,9 +32,9 @@ public class ClassroomRepository
         return result;
     }
 
-    public async Task<List<Dictionary<string, object>>> GetAllRowsAsync(string tableName)
+    public async Task<List<Dictionary<string, object>>> GetAllRowsAsync()
     {
-        string query = $"SELECT * FROM {tableName}"; 
+        string query = $"SELECT * FROM {Rooms}"; 
         var rows = new List<Dictionary<string, object>>();
 
         using (MySqlConnection connection = context.GetConnection())
@@ -54,8 +56,8 @@ public class ClassroomRepository
 
     public async Task<object> AddClassroomAsync(Room room)
     {
-        string query = @"
-        INSERT INTO rooms (name, lat, lon, alt, level, site) 
+        string query = $@"
+        INSERT INTO {Rooms} (name, lat, lon, alt, level, site) 
         VALUES (@name, @lat, @lon, @alt, @level, @site)";
         object result = null;
 
@@ -64,7 +66,6 @@ public class ClassroomRepository
         {
             try
             {
-
                 command.Parameters.AddWithValue("@name", room.Name);
                 command.Parameters.AddWithValue("@lat", room.Lat);
                 command.Parameters.AddWithValue("@lon", room.Lon);
@@ -84,9 +85,9 @@ public class ClassroomRepository
     }
     
     //Virker Perfekt
-    public async Task<Dictionary<string, object>?> GetRow(string tableName, int limit)
+    public async Task<Dictionary<string, object>?> GetRow(int limit)
     {
-        string query = $"SELECT * FROM {tableName} LIMIT 1";
+        string query = $"SELECT * FROM {Rooms} LIMIT 1";
 
         using MySqlConnection connection = context.GetConnection();
         using var cmd = new MySqlCommand(query, connection);
