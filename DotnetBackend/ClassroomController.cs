@@ -16,12 +16,7 @@ public class ClassroomController : Controller
     [HttpGet("Classrooms")]
     public async Task<IActionResult> GetClassrooms()
     {
-
-        var navn = new List<Dictionary<string, object>>();
-        navn = await classroomRepository.GetAllRowsAsync();
-
-        classroomRepository.GetVariable("1", "hans");
-
+        var navn =  await classroomRepository.GetAllRowsAsync();
         return Ok(navn);
 
     }
@@ -37,7 +32,7 @@ public class ClassroomController : Controller
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> GetClassroom(string keyword = "", int limit = 10)
     {
-        var row = await classroomRepository.GetRow(1);
+        var row = await classroomRepository.GetRowAsync();
 
         if (row == null)
             return NotFound("No data found");

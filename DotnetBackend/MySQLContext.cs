@@ -1,37 +1,18 @@
 using DotNetBackend.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 
-public class MySqlContext : IDisposable
+public class MySQLContext : DbContext
 {
-    private readonly string connectionString;
-    private MySqlConnection connection;
+    public MySQLContext (DbContextOptions<MySQLContext> options) : base(options) {}
 
-    public MySqlContext(string connectionString)
+    public DbSet<Room> Rooms { get; set; }
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        this.connectionString = connectionString;
-        this.connection = new MySqlConnection(connectionString);
-    }
-
-    public MySqlConnection GetConnection()
-    {
-        if (connection.State == ConnectionState.Closed)
-        {
-            connection.Open();
-        }
-
-        return connection;
-    }
-
-    public void Dispose()
-    {
-        if (connection != null && connection.State != ConnectionState.Closed)
-        {
-            connection.Close();
-        }
-
-        connection?.Dispose();
+        base.OnModelCreating(modelBuilder);
     }
 }
