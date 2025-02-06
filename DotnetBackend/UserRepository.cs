@@ -2,9 +2,9 @@ public class UserRepository
 {
     private const string Users = "users";
 
-    private readonly MySqlContext context;
+    private readonly MySQLContext context;
 
-    public UserRepository(MySqlContext context)
+    public UserRepository(MySQLContext context)
     {
         this.context = context;
     }

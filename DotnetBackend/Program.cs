@@ -1,13 +1,17 @@
 using MySql.Data.MySqlClient;
 using Microsoft.OpenApi.Models;
 using System;
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string connectionString = builder.Configuration.GetConnectionString("MySQL") ?? throw(new KeyNotFoundException());
 
-builder.Services.AddSingleton(new MySqlContext(connectionString));
+builder.Services.AddDbContext<MySQLContext>(options => 
+    options.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
+    ));
 builder.Services.AddScoped<ClassroomRepository>();
 builder.Services.AddScoped<UserRepository>();
 
