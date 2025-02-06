@@ -16,7 +16,7 @@ public class ClassroomController : Controller
     [HttpGet("Classrooms")]
     public async Task<IActionResult> GetClassrooms()
     {
-        var navn = await classroomRepository.GetAllRowsAsync();
+        var navn =  await classroomRepository.GetAllRowsAsync();
         return Ok(navn);
 
     }
