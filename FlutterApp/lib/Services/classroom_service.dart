@@ -8,12 +8,12 @@ class ClassroomService {
   static Future<List<RoomLocation>> fetchClassrooms(
       {String keyword = '', int limit = 5}) async {
     try {
-      //final queryParameters = {
-      //  'keyword': keyword,
-      //  'limit': limit.toString(),
-      //};
-      final uri = Uri.parse('$_baseUrl/api/classrooms');
-          // .replace(queryParameters: queryParameters);
+      final queryParameters = {
+        'keyword': keyword,
+        'limit': limit.toString(),
+      };
+      final uri = Uri.parse('$_baseUrl/api/classrooms')
+          .replace(queryParameters: queryParameters);
 
       final response = await http.get(uri);
 

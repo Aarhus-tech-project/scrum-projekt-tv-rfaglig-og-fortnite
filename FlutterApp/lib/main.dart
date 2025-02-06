@@ -129,12 +129,10 @@ class _MyAppState extends State<MyApp> {
               ),
               Expanded(
                 child: SizedBox(
-                  height: 150, // Set a fixed height for the ListView
+                  height: 150,
                   child: ListView.builder(
-                    itemCount: filteredClassrooms
-                        .length, // Number of items in the list
+                    itemCount: filteredClassrooms.length,
                     itemBuilder: (context, index) {
-                      // Define the items in the list
                       return Container(
                           height: 70,
                           margin: EdgeInsets.all(5),

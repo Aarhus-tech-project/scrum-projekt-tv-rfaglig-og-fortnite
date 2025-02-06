@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'Map.dart';
 
 class Compass extends StatefulWidget {
   final RoomLocation Room;
@@ -44,8 +45,28 @@ class _CompassState extends State<Compass> {
           actions: [
             TextButton(
                 onPressed: () {
-                  // Define the action when the text is clicked
-                  print('Text clicked');
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          Map(Room: widget.Room),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(1.0, 0.0);
+                        const end = Offset.zero;
+                        const curve = Curves.easeInOut;
+
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Icon(
                   Icons.map,
