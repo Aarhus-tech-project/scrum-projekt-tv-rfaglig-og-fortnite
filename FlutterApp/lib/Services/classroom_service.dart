@@ -3,11 +3,19 @@ import 'package:http/http.dart' as http;
 import '../RoomLocation.dart';
 
 class ClassroomService {
-  static const String _baseUrl = 'http://localhost:5126';
+  static const String _baseUrl = 'http://192.168.254.58:5126';
 
-  Future<List<RoomLocation>> fetchClassrooms() async {
+  static Future<List<RoomLocation>> fetchClassrooms(
+      {String keyword = '', int limit = 5}) async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/classrooms'));
+      final queryParameters = {
+        'keyword': keyword,
+        'limit': limit.toString(),
+      };
+      final uri = Uri.parse('$_baseUrl/api/classrooms')
+          .replace(queryParameters: queryParameters);
+
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
