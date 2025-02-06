@@ -14,12 +14,16 @@ public class UserController : Controller
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserDTO registerUser)
     {
-        User user = new(registerUser);
-        var a = user.PasswordHash.Length;
-        var password = PasswordHasher.VerifyPassword("strng", user.PasswordHash);
-        registerUser.Dispose();
+        if (!EmailService.IsValidEmail(registerUser.Email))
+            return BadRequest("Invalid Email");
 
-        return NotFound();
+        if (await userRepository.UserExists(registerUser.Email))
+            return Conflict("User Already Exists");
+
+        User user = await userRepository.RegisterUser(registerUser);
+        registerUser.Dispose();
+        
+        return Ok(user);   
     }
 
     [HttpPost("Login")]
