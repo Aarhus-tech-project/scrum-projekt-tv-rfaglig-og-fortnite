@@ -43,7 +43,7 @@ public class UserController : Controller
 
         loginRequest.Dispose();
 
-        string apiKey = apiKeyService.GenerateApiKey(attemptedUser.Email, TimeSpan.FromMinutes(60));
+        string apiKey = apiKeyService.GenerateApiKey(attemptedUser.Email, TimeSpan.FromDays(30));
         return Ok(apiKey);
     }
 }

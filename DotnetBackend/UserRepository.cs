@@ -29,4 +29,11 @@ public class UserRepository
         await context.SaveChangesAsync();
         return user;
     }
+
+    public async Task<List<Room>> GetNearbyRoomsAsync(string keyword, double lat, double lon, int limit = 10)
+    {
+        return await context.Rooms
+            .FromSqlInterpolated($"SELECT *, (6371 * ACOS(COS(RADIANS({lat})) * COS(RADIANS(Lat)) * COS(RADIANS(Lon) - RADIANS({lon})) + SIN(RADIANS({lat})) * SIN(RADIANS(Lat)))) AS Distance FROM rooms WHERE Name LIKE CONCAT('%', {keyword}, '%') ORDER BY Distance ASC LIMIT {limit}")
+            .ToListAsync();
+    }
 }
