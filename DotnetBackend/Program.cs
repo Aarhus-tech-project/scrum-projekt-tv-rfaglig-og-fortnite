@@ -42,6 +42,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ApiKeyMiddleware>();
+app.UseAuthorization();
 app.MapControllers();
 
 app.UseHttpsRedirection();
