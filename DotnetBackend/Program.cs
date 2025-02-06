@@ -1,17 +1,22 @@
 using MySql.Data.MySqlClient;
 using Microsoft.OpenApi.Models;
 using System;
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("MySQL");
-builder.Services.AddSingleton(new MySqlContext(connectionString));
 
-// Get connection string from appsettings.json
+string connectionString = builder.Configuration.GetConnectionString("MySQL") ?? throw(new KeyNotFoundException());
+
+builder.Services.AddDbContext<MySQLContext>(options => 
+    options.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
+    ));
+builder.Services.AddScoped<ClassroomRepository>();
+builder.Services.AddScoped<UserRepository>();
 
 // Register MySqlConnection as a service
 builder.Services.AddControllers();
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -24,7 +29,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
@@ -36,8 +40,6 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-
-
 
 var app = builder.Build();
 app.MapControllers();

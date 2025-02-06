@@ -1,8 +1,10 @@
 import 'package:classroom_finder_app/RoomLocation.dart';
 import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'Map.dart';
 
 class Compass extends StatefulWidget {
   final RoomLocation Room;
@@ -14,12 +16,22 @@ class Compass extends StatefulWidget {
 
 class _CompassState extends State<Compass> {
   double angleToTarget = 0.0; // Angle in degress offset from north to target
+  double startLatitude = 0.0;
+  double startLongitude = 0.0;
 
-  double startLatitude = 56.11370211968747;
-  double startLongtitude = 10.126561169173625;
+  late double targetLatitude;
+  late double targetLongtitude;
+  late double targetAltitude;
+  late int level;
 
-  double targetLatitude = 56.11374204896286;
-  double targetLongtitude = 10.126310686422762;
+  @override
+  void initState() {
+    super.initState();
+    targetLatitude = widget.Room.latitude;
+    targetLongtitude = widget.Room.longitude;
+    targetAltitude = widget.Room.altitude;
+    level = widget.Room.level;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +45,28 @@ class _CompassState extends State<Compass> {
           actions: [
             TextButton(
                 onPressed: () {
-                  // Define the action when the text is clicked
-                  print('Text clicked');
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          Map(Room: widget.Room),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(1.0, 0.0);
+                        const end = Offset.zero;
+                        const curve = Curves.easeInOut;
+
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Icon(
                   Icons.map,
@@ -52,14 +84,30 @@ class _CompassState extends State<Compass> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    widget.Room.name,
-                    style: TextStyle(
-                        fontSize: 30, decoration: TextDecoration.underline),
-                  ),
-                  Text("Etage ${widget.Room.level}",
-                      style: TextStyle(
-                          fontSize: 30, decoration: TextDecoration.underline))
+                  StreamBuilder<Position>(
+                      stream: LocationUtils.getContinuousLocation(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        }
+                        var position = snapshot.data;
+                        angleToTarget = Geolocator.bearingBetween(
+                            position!.latitude,
+                            position.longitude,
+                            targetLatitude,
+                            targetLongtitude);
+                        startLatitude = position.latitude;
+                        startLongitude = position.longitude;
+                        return Text(
+                          'Your Location: $startLatitude, $startLongitude\nTarget Location: $targetLatitude, $targetLongtitude\n\n Room: ${widget.Room.name} Meters: ${Geolocator.distanceBetween(startLatitude, startLongitude, targetLatitude, targetLongtitude).toStringAsFixed(0)} Level: $level',
+                          style: TextStyle(
+                              fontSize: 20,
+                              decoration: TextDecoration.underline),
+                        );
+                      }),
                 ],
               ),
             ),
@@ -97,29 +145,7 @@ class _CompassState extends State<Compass> {
                         );
                       },
                     ),
-                    StreamBuilder(
-                        stream: LocationUtils.getContinuousLocation(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          }
-
-                          var position = snapshot.data;
-
-                          angleToTarget = Geolocator.bearingBetween(
-                              position!.latitude,
-                              position.longitude,
-                              targetLatitude,
-                              targetLongtitude);
-
-                          return Text(
-                              "longitude: ${position.longitude.toStringAsFixed(8)}\n latitude: ${position.latitude.toStringAsFixed(8)}\n altitude: ${position.altitude.toStringAsFixed(2)}",
-                              style: TextStyle(fontSize: 24),
-                              textAlign: TextAlign.center);
-                        }),
+                    GPSText(),
                   ],
                 ),
               ),
@@ -131,13 +157,35 @@ class _CompassState extends State<Compass> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              "Latitude: ${widget.Room.latitude}'\nLongitude: ${widget.Room.longitude}\nAltitude: ${widget.Room.altitude}",
+              'Level {level}',
               style:
                   TextStyle(fontSize: 30, decoration: TextDecoration.underline),
             ),
             Text("Etage 1", style: TextStyle(fontSize: 30))
           ],
         )));
+  }
+
+  StreamBuilder<Position> GPSText() {
+    return StreamBuilder(
+        stream: LocationUtils.getContinuousLocation(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          }
+          var position = snapshot.data;
+          angleToTarget = Geolocator.bearingBetween(position!.latitude,
+              position.longitude, targetLatitude, targetLongtitude);
+          startLatitude = position.latitude;
+          startLongitude = position.longitude;
+
+          return Text(
+              "longitude: ${startLatitude.toStringAsFixed(8)}\n latitude: ${startLongitude.toStringAsFixed(8)}\n altitude: ${position.altitude.toStringAsFixed(2)}",
+              style: TextStyle(fontSize: 24),
+              textAlign: TextAlign.center);
+        });
   }
 }
 
