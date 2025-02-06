@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 public class UserController : Controller
 {
     private readonly UserRepository userRepository;
+    private readonly ApiKeyService apiKeyService;
 
-    public UserController(UserRepository userRepository)
+    public UserController(UserRepository userRepository, ApiKeyService apiKeyService)
     {
         this.userRepository = userRepository;
+        this.apiKeyService = apiKeyService;
     }
 
     [HttpPost("Register")]
@@ -23,13 +25,25 @@ public class UserController : Controller
         User user = await userRepository.RegisterUser(registerUser);
         registerUser.Dispose();
         
-        return Ok(user);   
+        return Ok();   
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequest)
     {
-        return Ok();
+        if (!EmailService.IsValidEmail(loginRequest.Email))
+            return BadRequest("Invalid Email");
+
+        if (!await userRepository.UserExists(loginRequest.Email))
+            return NotFound("User Does Not Exist");
+
+        User attemptedUser = await userRepository.GetUserFromEmail(loginRequest.Email);
+        if (!PasswordHasher.VerifyPassword(loginRequest.Password, attemptedUser.PasswordHash))
+            return Unauthorized("Wrong Password");
+
+        loginRequest.Dispose();
+
+        string apiKey = apiKeyService.GenerateApiKey(attemptedUser.Email, TimeSpan.FromMinutes(60));
+        return Ok(apiKey);
     }
-    
 }

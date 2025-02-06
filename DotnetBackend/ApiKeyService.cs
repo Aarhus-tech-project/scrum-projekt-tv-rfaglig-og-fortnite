@@ -4,7 +4,7 @@ using System.Text;
 
 public class ApiKeyService
 {
-    private readonly string _secretKey = "1234";
+    private readonly string _secretKey = "Datait2025!";
 
     public string GenerateApiKey(string clientName, TimeSpan validity)
     {

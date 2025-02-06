@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 public class UserRepository
 {
     private readonly MySQLContext context;
+    private readonly ApiKeyService apiKeyService;
 
-    public UserRepository(MySQLContext context)
+    public UserRepository(MySQLContext context, ApiKeyService apiKeyService)
     {
         this.context = context;
+        this.apiKeyService = apiKeyService;
     }
 
     public async Task<bool> UserExists(string email)

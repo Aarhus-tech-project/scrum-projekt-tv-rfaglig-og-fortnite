@@ -1,16 +1,29 @@
-public class ApiKeyMiddleware 
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+
+public class ApiKeyMiddleware
 {
-    private readonly RequestDelegate next;
-    private readonly ApiKeyService apiKeyService;
+    private readonly RequestDelegate _next;
+    private readonly ApiKeyService _apiKeyService;
 
     public ApiKeyMiddleware(RequestDelegate next, ApiKeyService apiKeyService)
     {
-        this.next = next;
-        this.apiKeyService = apiKeyService;
+        _next = next;
+        _apiKeyService = apiKeyService;
     }
 
     public async Task Invoke(HttpContext context)
     {
+        // 🔹 Skip API Key check for Swagger & OpenAPI endpoints
+        if (context.Request.Path.StartsWithSegments("/swagger") ||
+            context.Request.Path.StartsWithSegments("/api-docs"))
+        {
+            await _next(context);
+            return;
+        }
+
+        // 🔹 Check for API Key in Headers
         if (!context.Request.Headers.TryGetValue("X-Api-Key", out var providedApiKey))
         {
             context.Response.StatusCode = 401;
@@ -18,7 +31,7 @@ public class ApiKeyMiddleware
             return;
         }
 
-        if (!apiKeyService.ValidateApiKey(providedApiKey!, out var clientName))
+        if (!_apiKeyService.ValidateApiKey(providedApiKey, out var clientName))
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Invalid or Expired API Key");
@@ -26,6 +39,6 @@ public class ApiKeyMiddleware
         }
 
         context.Items["ClientName"] = clientName;
-        await next(context);
+        await _next(context);
     }
 }
