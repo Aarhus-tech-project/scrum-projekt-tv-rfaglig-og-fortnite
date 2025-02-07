@@ -3,30 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:classroom_finder_app/ApiServices/APIservices.dart';
 
 void main() => runApp(MyApp());
-
-Future<void> sendData(String name, String email, String password) async {
-  final url = Uri.parse('http://10.0.2.2:5126/api/auth/Register');
-
-  final response = await http.post(
-    url,
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'name': name,
-      'email': email,
-      'password': password,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    print('Success: ${response.body}');
-  } else {
-    throw Exception('Failed to send data');
-  }
-}
 
 class MyApp extends StatelessWidget {
   @override
@@ -47,8 +26,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String Name = 'Nillersssasdasdssss';
-  String Email = 'nillersssssasdasdssss@gmail.com';
+  String Name = 'asdsasdasd';
+  String Email = 'adasdadasdasd@gmail.com';
   String Password = '1234sssasdasdssss';
   bool light = true;
 
@@ -97,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () {
-          // Add your login logic here
+          ApiService.login(Email, Password);
         },
         child: Text(
           'Login',
@@ -124,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () {
-          sendData(Name, Email, Password);
+          ApiService.register(Name, Email, Password);
         },
         child: Text(
           'Register',
