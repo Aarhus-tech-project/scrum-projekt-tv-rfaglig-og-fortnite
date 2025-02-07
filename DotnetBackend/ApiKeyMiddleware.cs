@@ -15,7 +15,6 @@ public class ApiKeyMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        // 🔹 Skip API Key check for Swagger & OpenAPI endpoints
         if (context.Request.Path.StartsWithSegments("/swagger") ||
             context.Request.Path.StartsWithSegments("/api-docs"))
         {
@@ -23,7 +22,6 @@ public class ApiKeyMiddleware
             return;
         }
 
-        // 🔹 Check for API Key in Headers
         if (!context.Request.Headers.TryGetValue("X-Api-Key", out var providedApiKey))
         {
             context.Response.StatusCode = 401;
