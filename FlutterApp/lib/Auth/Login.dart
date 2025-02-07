@@ -7,7 +7,7 @@ import 'dart:convert';
 void main() => runApp(MyApp());
 
 Future<void> sendData(String name, String email, String password) async {
-  final url = Uri.parse('http://localhost:3000/api/auth/register');
+  final url = Uri.parse('http://localhost:5126/api/auth/register');
 
   final response = await http.post(
     url,
@@ -47,9 +47,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String _Name = '';
-  String _email = '';
-  String _password = '';
+  String Name = '';
+  String Email = '';
+  String Password = '';
   bool light = true;
 
   @override
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () {
-          // Add your login logic here
+          sendData(Name, Email, Password);
         },
         child: Text(
           'Register',
@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        _email = value;
+                        Email = value;
                       });
                     },
                   ),
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  _email = value;
+                  Email = value;
                 });
               },
             ),
@@ -239,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
               onChanged: (value) {
                 setState(() {
-                  _password = value;
+                  Password = value;
                 });
               },
             ),
