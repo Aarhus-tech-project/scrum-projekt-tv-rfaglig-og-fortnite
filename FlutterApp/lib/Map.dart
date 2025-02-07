@@ -22,5 +22,3 @@ class _Map extends State<Map> {
     );
   }
 }
-
-class $ {}
