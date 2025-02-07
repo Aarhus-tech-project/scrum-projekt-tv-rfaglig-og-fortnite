@@ -1,13 +1,13 @@
 using DotNetBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
-[Route("api")]
-public class UserController : Controller
+[Route("api/auth")]
+public class AuthController : Controller
 {
     private readonly UserRepository userRepository;
     private readonly ApiKeyService apiKeyService;
 
-    public UserController(UserRepository userRepository, ApiKeyService apiKeyService)
+    public AuthController(UserRepository userRepository, ApiKeyService apiKeyService)
     {
         this.userRepository = userRepository;
         this.apiKeyService = apiKeyService;
