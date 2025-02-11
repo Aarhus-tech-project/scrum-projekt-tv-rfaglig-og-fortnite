@@ -1,24 +1,11 @@
 import 'dart:ui';
 import 'dart:math';
+import 'package:classroom_finder_app/Storage/StorageKey.dart';
+import 'package:classroom_finder_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:classroom_finder_app/ApiServices/APIservices.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginScreen(),
-    );
-  }
-}
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -30,6 +17,14 @@ class _LoginScreenState extends State<LoginScreen> {
   String Email = 'adasdadasdasd@gmail.com';
   String Password = '1234sssasdasdssss';
   bool light = true;
+  @override
+  void initState() {
+    super.initState();
+    var apiKey = StorageKey.getApiToken();
+    if (apiKey != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

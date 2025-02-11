@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:classroom_finder_app/Storage/StorageKey.dart';
 
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:5126/api/auth';
@@ -17,6 +18,7 @@ class ApiService {
       );
       if (response.statusCode == 200) {
         print('Success: ${response.body}');
+        StorageKey.saveApiToken(response.body);
       } else {
         print('Failed to send data: ${response.statusCode}');
         print('Response body: ${response.body}');
