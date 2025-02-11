@@ -19,7 +19,7 @@ class RoomLocation {
     return RoomLocation(
       name: json['name'] ?? '',
       latitude: (json['lat'] ?? 0.0).toDouble(),
-      longitude: (json['long'] ?? 0.0).toDouble(),
+      longitude: (json['lon'] ?? 0.0).toDouble(),
       altitude: (json['alt'] ?? 0.0).toDouble(),
       level: (json['level'] ?? 0).toInt(),
       site: json['site'] ?? '',

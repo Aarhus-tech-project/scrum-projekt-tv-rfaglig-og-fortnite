@@ -1,15 +1,11 @@
-import 'dart:math';
-
 import 'package:classroom_finder_app/CompassPage.dart';
 import 'package:classroom_finder_app/RoomLocation.dart';
+import 'services/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'services/classroom_service.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   runApp(const MyApp());
 }
 
@@ -65,42 +61,46 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  TextEditingController controller = TextEditingController();
   List<RoomLocation> classrooms = [];
   List<RoomLocation> filteredClassrooms = [];
-  late Future<List<RoomLocation>> futureClassrooms;
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    futureClassrooms = ClassroomService().fetchClassrooms();
-    futureClassrooms.then((data) {
-      setState(() {
-        classrooms = data;
-        filteredClassrooms = classrooms;
-      });
-    });
+    loadInitialClassrooms();
     controller.addListener(() {
       filterClassrooms();
     });
   }
 
-  void filterClassrooms() {
-    List<RoomLocation> results = [];
+  void loadInitialClassrooms() async {
+    List<RoomLocation> initialClassrooms =
+        await ClassroomService.fetchClassrooms(limit: 5);
+    setState(() {
+      classrooms = initialClassrooms;
+      filteredClassrooms = classrooms;
+    });
+  }
+
+  void filterClassrooms() async {
     if (controller.text.isEmpty) {
-      results = classrooms;
+      setState(() {
+        filteredClassrooms = classrooms;
+      });
     } else {
-      results = classrooms
+      List<RoomLocation> allClassrooms =
+          await ClassroomService.fetchClassrooms();
+      List<RoomLocation> results = allClassrooms
           .where((classroom) => classroom.name
               .toLowerCase()
               .contains(controller.text.toLowerCase()))
+          .take(5)
           .toList();
+      setState(() {
+        filteredClassrooms = results;
+      });
     }
-
-    setState(() {
-      filteredClassrooms = results;
-    });
   }
 
   @override
@@ -128,13 +128,11 @@ class _MyAppState extends State<MyApp> {
                 style: TextStyle(fontSize: 30),
               ),
               Expanded(
-                child: Container(
-                  height: 150, // Set a fixed height for the ListView
+                child: SizedBox(
+                  height: 150,
                   child: ListView.builder(
-                    itemCount: filteredClassrooms
-                        .length, // Number of items in the list
+                    itemCount: filteredClassrooms.length,
                     itemBuilder: (context, index) {
-                      // Define the items in the list
                       return Container(
                           height: 70,
                           margin: EdgeInsets.all(5),
