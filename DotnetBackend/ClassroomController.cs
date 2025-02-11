@@ -22,9 +22,9 @@ public class ClassroomController : Controller
     }
 
     [HttpPost("Classrooms")]
-    public async Task<IActionResult> AddClassroom([FromBody] Room room)
+    public async Task<IActionResult> AddClassroom([FromBody] AddRoomDTO addRoomDTO)
     {
-        var result = await classroomRepository.AddClassroomAsync(room);
+        var result = await classroomRepository.AddClassroomAsync(new Room(addRoomDTO));
 
         return Ok();
     }
@@ -32,10 +32,26 @@ public class ClassroomController : Controller
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> GetClassroom(string keyword = "", int limit = 10)
     {
-        var row = await classroomRepository.GetRowAsync();
+        
+        //var row = await classroomRepository.GetRowAsync(keyword);
+
+        //if (row == null)
+          //  return NotFound("No data found");
+
+        //return Ok(row);
+
+        var row = await classroomRepository.SearchClassroomsAsync(keyword);
+
+        var hans = new List<AddRoomDTO>();
+
+        foreach (var currentItem in hans) 
+        {
+            hans.Add(currentItem);
+            
+        }
 
         if (row == null)
-            return NotFound("No data found");
+            return NotFound("No matching classroom found");
 
         return Ok(row);
     }

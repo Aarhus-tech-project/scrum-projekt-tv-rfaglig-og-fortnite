@@ -17,25 +17,21 @@ public class ClassroomRepository
 
     public async Task<int> AddClassroomAsync(Room room)
     {
-        try
-        {
-            context.Rooms.Add(room);
-            await context.SaveChangesAsync();
-            return room.ID;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex.Message);
-            return -1;
-        }
+        context.Rooms.Add(room);
+        await context.SaveChangesAsync();
+        return room.ID;
+        
     }
 
-    public async Task<Room> GetRowAsync()
+    public async Task<List<Room>> SearchClassroomsAsync(string keyword)
     {
-        var room = await context.Rooms.FirstOrDefaultAsync();
-        if (room == null) return null;
+        //var room = await context.Rooms.FirstOrDefaultAsync();
+        //if (room == null) return null;
 
-        return room;
+        //return room;
+
+        return await context.Rooms.Where(r => EF.Functions.Like(r.Name, $"%{keyword}%")).ToListAsync();
+
 
     }
 }

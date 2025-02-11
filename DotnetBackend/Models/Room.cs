@@ -26,6 +26,20 @@ namespace DotNetBackend.Models
 
         [Required]
         [StringLength(128)]
-        public string Site { get; set; }
+        public string Site { get; set; } 
+        
+        public Room(){}
+        
+        public Room(AddRoomDTO addRoomDTO)
+    {
+        Name = addRoomDTO.Name;
+        Lat = addRoomDTO.Lat;
+        Lon = addRoomDTO.Lon;
+        Alt = addRoomDTO.Alt;
+        Level = addRoomDTO.Level;
+        Site = addRoomDTO.Site;
     }
+    }
+    
+   
 }
