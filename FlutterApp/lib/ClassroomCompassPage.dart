@@ -1,20 +1,18 @@
-import 'package:classroom_finder_app/RoomLocation.dart';
+import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
-import 'Map.dart';
 
-class Compass extends StatefulWidget {
-  final RoomLocation Room;
-  const Compass({super.key, required this.Room});
+class ClassroomCompassPage extends StatefulWidget {
+  final Room room;
+  const ClassroomCompassPage({super.key, required this.room});
 
   @override
-  State<Compass> createState() => _CompassState();
+  State<ClassroomCompassPage> createState() => _ClassroomCompassPageState();
 }
 
-class _CompassState extends State<Compass> {
+class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
   double angleToTarget = 0.0; // Angle in degress offset from north to target
   double startLatitude = 0.0;
   double startLongitude = 0.0;
@@ -27,10 +25,10 @@ class _CompassState extends State<Compass> {
   @override
   void initState() {
     super.initState();
-    targetLatitude = widget.Room.latitude;
-    targetLongtitude = widget.Room.longitude;
-    targetAltitude = widget.Room.altitude;
-    level = widget.Room.level;
+    targetLatitude = widget.room.latitude;
+    targetLongtitude = widget.room.longitude;
+    targetAltitude = widget.room.altitude;
+    level = widget.room.level;
   }
 
   @override
@@ -39,34 +37,12 @@ class _CompassState extends State<Compass> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: Text(
-            widget.Room.name,
+            widget.room.name,
             style: TextStyle(color: Colors.white),
           ),
           actions: [
             TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          Map(Room: widget.Room),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        const begin = Offset(1.0, 0.0);
-                        const end = Offset.zero;
-                        const curve = Curves.easeInOut;
-
-                        var tween = Tween(begin: begin, end: end)
-                            .chain(CurveTween(curve: curve));
-                        var offsetAnimation = animation.drive(tween);
-
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
                 },
                 child: Icon(
                   Icons.map,
@@ -84,30 +60,6 @@ class _CompassState extends State<Compass> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  StreamBuilder<Position>(
-                      stream: LocationUtils.getContinuousLocation(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text("Error: ${snapshot.error}");
-                        }
-                        var position = snapshot.data;
-                        angleToTarget = Geolocator.bearingBetween(
-                            position!.latitude,
-                            position.longitude,
-                            targetLatitude,
-                            targetLongtitude);
-                        startLatitude = position.latitude;
-                        startLongitude = position.longitude;
-                        return Text(
-                          'Your Location: $startLatitude, $startLongitude\nTarget Location: $targetLatitude, $targetLongtitude\n\n Room: ${widget.Room.name} Meters: ${Geolocator.distanceBetween(startLatitude, startLongitude, targetLatitude, targetLongtitude).toStringAsFixed(0)} Level: $level',
-                          style: TextStyle(
-                              fontSize: 20,
-                              decoration: TextDecoration.underline),
-                        );
-                      }),
                 ],
               ),
             ),

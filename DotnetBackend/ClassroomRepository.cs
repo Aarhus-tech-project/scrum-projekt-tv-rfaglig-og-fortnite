@@ -1,38 +1,32 @@
 using DotNetBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class ClassroomRepository
+public class ClassroomRepository(MySQLContext context)
 {
-    private readonly MySQLContext context;
-
-    public ClassroomRepository(MySQLContext context)
-    {
-        this.context = context;
-    }
+    private readonly MySQLContext context = context;
 
     public async Task<List<Room>> GetAllRowsAsync()
     {
         return await context.Rooms.ToListAsync();
     }
 
-    public async Task<int> AddClassroomAsync(Room room)
+    public async Task AddClassroomAsync(Room room)
     {
         context.Rooms.Add(room);
-        await context.SaveChangesAsync();
-        return room.ID;
-        
+        int rowsAffected = await context.SaveChangesAsync();
+
+        if (rowsAffected <= 0)
+            throw new Exception("Failed to add classroom");
     }
 
-    public async Task<List<Room>> SearchClassroomsAsync(string keyword)
+    public async Task<List<Room>> SearchClassroomsAsync(string keyword, int limit = 10)
     {
-        //var room = await context.Rooms.FirstOrDefaultAsync();
-        //if (room == null) return null;
+        return await context.Rooms.Where(r => EF.Functions.Like(r.Name, $"%{keyword}%")).Take(limit).ToListAsync();
+    }
 
-        //return room;
-
-        return await context.Rooms.Where(r => EF.Functions.Like(r.Name, $"%{keyword}%")).ToListAsync();
-
-
+    public async Task<List<Room>> SearchNearbyRoomsAsync(double lat, double lon, string keyword, int limit = 10)
+    {
+        return await context.Rooms.FromSqlInterpolated($"SELECT *, (6371 * ACOS(COS(RADIANS({lat})) * COS(RADIANS(Lat)) * COS(RADIANS(Lon) - RADIANS({lon})) + SIN(RADIANS({lat})) * SIN(RADIANS(Lat)))) AS Distance FROM rooms WHERE Name LIKE CONCAT('%', {keyword}, '%') ORDER BY Distance ASC LIMIT {limit}").ToListAsync();
     }
 }
 

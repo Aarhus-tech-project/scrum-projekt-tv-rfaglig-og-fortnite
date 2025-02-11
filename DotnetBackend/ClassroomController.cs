@@ -4,55 +4,57 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
 [Route("api")]
-public class ClassroomController : Controller
+public class ClassroomController(ClassroomRepository classroomRepository) : Controller
 {
-    private readonly ClassroomRepository classroomRepository;
-
-    public ClassroomController(ClassroomRepository classroomRepository)
-    {
-        this.classroomRepository = classroomRepository;
-    }
-
-    [HttpGet("Classrooms")]
-    public async Task<IActionResult> GetClassrooms()
-    {
-        var navn =  await classroomRepository.GetAllRowsAsync();
-        return Ok(navn);
-
-    }
+    private readonly ClassroomRepository classroomRepository = classroomRepository;
 
     [HttpPost("Classrooms")]
-    public async Task<IActionResult> AddClassroom([FromBody] AddRoomDTO addRoomDTO)
+    public async Task<IActionResult> AddClassroom([FromBody] RoomDTO room)
     {
-        var result = await classroomRepository.AddClassroomAsync(new Room(addRoomDTO));
-
-        return Ok();
+        try
+        {            
+            await classroomRepository.AddClassroomAsync(new Room(room));
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
     [HttpGet("SearchClassrooms")]
-    public async Task<IActionResult> GetClassroom(string keyword = "", int limit = 10)
+    public async Task<IActionResult> SearchClassrooms(string keyword = "", int limit = 10)
     {
-        
-        //var row = await classroomRepository.GetRowAsync(keyword);
+        try
+        {           
+            var classrooms = await classroomRepository.SearchClassroomsAsync(keyword);
 
-        //if (row == null)
-          //  return NotFound("No data found");
-
-        //return Ok(row);
-
-        var row = await classroomRepository.SearchClassroomsAsync(keyword);
-
-        var hans = new List<AddRoomDTO>();
-
-        foreach (var currentItem in hans) 
-        {
-            hans.Add(currentItem);
+            if (classrooms == null)
+                return NotFound("No matching classrooms found");
             
+            return Ok(classrooms.Select(c => new RoomDTO(c)));
         }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+    }
 
-        if (row == null)
-            return NotFound("No matching classroom found");
+    [HttpGet("SearchNearbyClassrooms")]
+    public async Task<IActionResult> SearchNearbyClassrooms(double lat, double lon, string keyword = "", int limit = 10)
+    {
+        try
+        {            
+            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(lat, lon, keyword, limit);
 
-        return Ok(row);
+            if (classrooms == null)
+                return NotFound("No matching classrooms found");
+
+            return Ok(classrooms.Select(c => new RoomDTO(c)));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 }

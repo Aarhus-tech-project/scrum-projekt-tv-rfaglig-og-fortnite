@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class StorageKey {
+class ApiKeyStorageService {
   static final _storage = FlutterSecureStorage();
 
   static const _apiTokenKey = 'classroom_finder_api_token';

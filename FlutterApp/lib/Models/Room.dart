@@ -1,4 +1,4 @@
-class RoomLocation {
+class Room {
   String name;
   double latitude;
   double longitude;
@@ -6,7 +6,7 @@ class RoomLocation {
   int level;
   String site;
 
-  RoomLocation({
+  Room({
     required this.name,
     required this.latitude,
     required this.longitude,
@@ -15,8 +15,8 @@ class RoomLocation {
     required this.site,
   });
 
-  factory RoomLocation.fromJson(Map<String, dynamic> json) {
-    return RoomLocation(
+  factory Room.fromJson(Map<String, dynamic> json) {
+    return Room(
       name: json['name'] ?? '',
       latitude: (json['lat'] ?? 0.0).toDouble(),
       longitude: (json['lon'] ?? 0.0).toDouble(),

@@ -28,18 +28,19 @@ namespace DotNetBackend.Models
         [StringLength(128)]
         public string Site { get; set; } 
         
-        public Room(){}
+        public Room()
+        {
+            
+        }
         
-        public Room(AddRoomDTO addRoomDTO)
-    {
-        Name = addRoomDTO.Name;
-        Lat = addRoomDTO.Lat;
-        Lon = addRoomDTO.Lon;
-        Alt = addRoomDTO.Alt;
-        Level = addRoomDTO.Level;
-        Site = addRoomDTO.Site;
+        public Room(RoomDTO roomDTO)
+        {
+            Name = roomDTO.Name;
+            Lat = roomDTO.Lat;
+            Lon = roomDTO.Lon;
+            Alt = roomDTO.Alt;
+            Level = roomDTO.Level;
+            Site = roomDTO.Site;
+        }
     }
-    }
-    
-   
 }
