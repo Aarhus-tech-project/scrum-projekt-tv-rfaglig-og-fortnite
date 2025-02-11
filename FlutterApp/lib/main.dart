@@ -1,12 +1,14 @@
+import 'package:classroom_finder_app/Auth/Login.dart';
 import 'package:classroom_finder_app/CompassPage.dart';
 import 'package:classroom_finder_app/RoomLocation.dart';
 import 'services/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'Storage/StorageKey.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(LoginScreen());
 }
 
 Future<Position> getPreciseLocation() async {

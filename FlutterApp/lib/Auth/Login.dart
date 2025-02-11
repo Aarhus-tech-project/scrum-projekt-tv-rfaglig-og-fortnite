@@ -1,45 +1,11 @@
 import 'dart:ui';
 import 'dart:math';
+import 'package:classroom_finder_app/Storage/StorageKey.dart';
+import 'package:classroom_finder_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-void main() => runApp(MyApp());
-
-Future<void> sendData(String name, String email, String password) async {
-  final url = Uri.parse('http://localhost:3000/api/auth/register');
-
-  final response = await http.post(
-    url,
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'name': name,
-      'email': email,
-      'password': password,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    print('Success: ${response.body}');
-  } else {
-    throw Exception('Failed to send data');
-  }
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginScreen(),
-    );
-  }
-}
+import 'package:classroom_finder_app/ApiServices/APIservices.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -47,10 +13,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String _Name = '';
-  String _email = '';
-  String _password = '';
+  String Name = 'asdsasdasd';
+  String Email = 'adasdadasdasd@gmail.com';
+  String Password = '1234sssasdasdssss';
   bool light = true;
+  @override
+  void initState() {
+    super.initState();
+    var apiKey = StorageKey.getApiToken();
+    if (apiKey != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () {
-          // Add your login logic here
+          ApiService.login(Email, Password);
         },
         child: Text(
           'Login',
@@ -124,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () {
-          // Add your login logic here
+          ApiService.register(Name, Email, Password);
         },
         child: Text(
           'Register',
@@ -170,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        _email = value;
+                        Name = value;
                       });
                     },
                   ),
@@ -204,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  _email = value;
+                  Email = value;
                 });
               },
             ),
@@ -239,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
               onChanged: (value) {
                 setState(() {
-                  _password = value;
+                  Password = value;
                 });
               },
             ),
