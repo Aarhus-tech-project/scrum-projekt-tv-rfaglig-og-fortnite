@@ -1,17 +1,18 @@
-using DotNetBackend.Models;
+using DotnetBackend.Models;
+using DotnetBackend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 
-public class MySQLContext : DbContext
-{
-    public MySQLContext (DbContextOptions<MySQLContext> options) : base(options) {}
+namespace DotnetBackend.Data;
 
+public class MySQLContext(DbContextOptions<MySQLContext> options) : DbContext(options)
+{
     public DbSet<Room> Rooms { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Site> Sites { get; set; }
-    public DbSet<UserSite> UserSites {get; set;}
+    public DbSet<UserSite> UserSites { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,15 +23,15 @@ public class MySQLContext : DbContext
             .HasForeignKey(r => r.SiteID)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<DotNetBackend.Models.UserSite>()
+        modelBuilder.Entity<UserSite>()
             .HasKey(us => new { us.UserID, us.SiteID});
 
-        modelBuilder.Entity<DotNetBackend.Models.UserSite>()
+        modelBuilder.Entity<UserSite>()
             .HasOne(us => us.User)
             .WithMany ()
             .HasForeignKey(us => us.UserID);
 
-        modelBuilder.Entity<DotNetBackend.Models.UserSite>()
+        modelBuilder.Entity<UserSite>()
             .HasOne(us => us.Site)
             .WithMany ()
             .HasForeignKey(us => us.SiteID);

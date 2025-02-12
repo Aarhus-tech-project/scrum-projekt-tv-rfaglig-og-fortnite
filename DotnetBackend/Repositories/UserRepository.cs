@@ -1,11 +1,13 @@
-using DotNetBackend.Models;
+using DotnetBackend.Data;
+using DotnetBackend.Models;
+using DotnetBackend.Models.DTOs;
+using DotnetBackend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-public class UserRepository(MySQLContext context, ApiKeyService apiKeyService)
-{
-    private readonly MySQLContext context = context;
-    private readonly ApiKeyService apiKeyService = apiKeyService;
+namespace DotnetBackend.Repositories;
 
+public class UserRepository(MySQLContext context)
+{
     public async Task<bool> UserExists(string email)
     {
         return await context.Users.FirstOrDefaultAsync(u => u.Email == email) != null;

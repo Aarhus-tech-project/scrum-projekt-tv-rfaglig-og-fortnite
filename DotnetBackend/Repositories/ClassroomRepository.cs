@@ -1,10 +1,12 @@
-using DotNetBackend.Models;
+using DotnetBackend.Data;
+using DotnetBackend.Models;
+using DotnetBackend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+
+namespace DotnetBackend.Repositories;
 
 public class ClassroomRepository(MySQLContext context)
 {
-    private readonly MySQLContext context = context;
-
     public async Task<List<Room>> GetAllRowsAsync()
     {
         return await context.Rooms.ToListAsync();

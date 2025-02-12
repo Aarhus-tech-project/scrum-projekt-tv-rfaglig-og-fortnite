@@ -2,6 +2,10 @@ using MySql.Data.MySqlClient;
 using Microsoft.OpenApi.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
+using DotnetBackend.Services;
+using DotnetBackend.Data;
+using DotnetBackend.Repositories;
+using DotnetBackend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

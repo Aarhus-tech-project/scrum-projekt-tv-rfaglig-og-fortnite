@@ -1,13 +1,16 @@
 using System.Net.Http.Headers;
-using DotNetBackend.Models;
+using DotnetBackend.Models;
+using DotnetBackend.Models.DTOs;
+using DotnetBackend.Models.Entities;
+using DotnetBackend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-[Route("api")]
-public class ClassroomController(ClassroomRepository classroomRepository, ApiKeyService apiKeyService) : Controller
-{
-    private readonly ClassroomRepository classroomRepository = classroomRepository;
+namespace DotnetBackend.Controllers;
 
+[Route("api")]
+public class ClassroomController(ClassroomRepository classroomRepository) : Controller
+{
     [HttpPost("Classrooms")]
     public async Task<IActionResult> AddClassroom([FromBody] RoomDTO room)
     {
@@ -27,7 +30,7 @@ public class ClassroomController(ClassroomRepository classroomRepository, ApiKey
     {
         try
         {           
-            var classrooms = await classroomRepository.SearchClassroomsAsync(keyword);
+            var classrooms = await classroomRepository.SearchClassroomsAsync(keyword, limit);
 
             if (classrooms == null)
                 return NotFound("No matching classrooms found");

@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using DotnetBackend.Services;
+
+namespace DotnetBackend.Middleware;
 
 public class ApiKeyAuthorizationFilter(ApiKeyService apiKeyService) : IAsyncAuthorizationFilter
 {
-    private readonly ApiKeyService apiKeyService = apiKeyService;
-
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var endpoint = context.HttpContext.GetEndpoint();
@@ -25,7 +26,7 @@ public class ApiKeyAuthorizationFilter(ApiKeyService apiKeyService) : IAsyncAuth
             return;
         }
 
-        if (!apiKeyService.ValidateApiKey(providedApiKey, out var clientName))
+        if (!apiKeyService.ValidateApiKey(providedApiKey!, out var clientName))
         {
             context.Result = new UnauthorizedObjectResult("Invalid or Expired API Key");
             return;

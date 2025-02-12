@@ -1,5 +1,7 @@
 using System.Text.RegularExpressions;
 
+namespace DotnetBackend.Services;
+
 public class EmailService
 {
     public static bool IsValidEmail(string email)

@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using DotnetBackend.Models.DTOs;
+using DotnetBackend.Services;
 
-namespace DotNetBackend.Models;
+namespace DotnetBackend.Models.Entities;
 
 public class User
 {

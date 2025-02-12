@@ -1,4 +1,4 @@
-namespace DotNetBackend.Models;
+namespace DotnetBackend.Models.DTOs;
 
 public class LoginRequestDTO : IDisposable
 {

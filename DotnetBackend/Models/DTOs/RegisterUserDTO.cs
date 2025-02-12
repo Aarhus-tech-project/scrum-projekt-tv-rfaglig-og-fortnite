@@ -1,4 +1,4 @@
-using DotNetBackend.Models;
+namespace DotnetBackend.Models.DTOs;
 
 public class RegisterUserDTO : IDisposable
 {

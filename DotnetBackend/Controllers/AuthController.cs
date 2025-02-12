@@ -1,12 +1,15 @@
-using DotNetBackend.Models;
+using DotnetBackend.Models;
+using DotnetBackend.Models.DTOs;
+using DotnetBackend.Models.Entities;
+using DotnetBackend.Repositories;
+using DotnetBackend.Services;
 using Microsoft.AspNetCore.Mvc;
+
+namespace DotnetBackend.Controllers;
 
 [Route("api/auth")]
 public class AuthController(UserRepository userRepository, ApiKeyService apiKeyService) : Controller
 {
-    private readonly UserRepository userRepository = userRepository;
-    private readonly ApiKeyService apiKeyService = apiKeyService;
-
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserDTO registerUser)
     {

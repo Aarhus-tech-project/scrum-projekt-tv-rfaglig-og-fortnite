@@ -2,6 +2,8 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
+namespace DotnetBackend.Services;
+
 public class PasswordHasher
 {
     public static string HashPassword(string password)

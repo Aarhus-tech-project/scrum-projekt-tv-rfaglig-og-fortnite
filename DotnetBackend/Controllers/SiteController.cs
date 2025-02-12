@@ -1,8 +1,12 @@
 using System.Net.Http.Headers;
-using DotNetBackend.Models;
+using DotnetBackend.Repositories;
+using DotnetBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
+namespace DotnetBackend.Controllers;
+
+[Route("api")]
 public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyService) : Controller
 {
     [HttpGet("GetUserSites")]
@@ -12,7 +16,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
             return Unauthorized("Unauthorized");
 
        
-        var sites = await siteRepository.GetUserSites(clientName);
+        var sites = await siteRepository.GetUserSites(clientName!);
         return Ok(sites);
     }
 }
