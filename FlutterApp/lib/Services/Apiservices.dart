@@ -1,16 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:classroom_finder_app/Models/Room.dart';
+import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:http/http.dart' as http;
 import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 
 class ApiService {
-  static const String prodBaseUrl = 'https://GAY_AZURE.com/api';
+  static VoidCallback? onLogout;
+
+  static const String prodBaseUrl = 'https://.com/api';
   
   // Detect platform and set base URL accordingly
   static final String baseUrl = getBaseUrl();
 
-  static String ApiKey = "";
+  static String? ApiKey;
+  
+  static void setLogoutHandler(VoidCallback logoutFunction) {
+    onLogout = logoutFunction;
+  }
 
   static String getBaseUrl() {
     if (Platform.isAndroid) {
@@ -29,6 +37,8 @@ class ApiService {
       Map<String, String>? body,
       bool requiresAuth = false,
     }) async {
+    InitializeApiKey();
+
     final url = Uri.parse('$baseUrl/$endpoint');
     final headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -76,7 +86,9 @@ class ApiService {
   }
 
   /// Logs in an existing user
-  static Future<String> login(String email, String password) async {
+  static Future<void> login(String email, String password) async {
+    // Check Key stoage for a api key before this
+
     final response = await sendRequest(
       'auth/Login',
       method: 'POST',
@@ -86,7 +98,8 @@ class ApiService {
       },
     );
 
-    return response.body;
+    ApiKey = response.body;
+    ApiKeyStorageService.saveApiToken(response.body);   
   }
 
   /// Fetches classrooms with optional keyword and limit
@@ -97,5 +110,23 @@ class ApiService {
     );
     final List<dynamic> data = json.decode(response.body);
     return data.map((json) => Room.fromJson(json)).toList();
+  }
+
+  static Future InitializeApiKey() async {
+    if (ApiKey == null) {
+      String? storedApiKey = await ApiKeyStorageService.getApiToken();
+
+      if(storedApiKey ==  null) {
+        onLogout?.call();
+        return;
+      }
+
+      ApiKey = storedApiKey;
+    }
+
+    if (!Apikeyservice.validateApiKey(ApiKey)) {
+      onLogout?.call();
+      return;
+    }
   }
 }

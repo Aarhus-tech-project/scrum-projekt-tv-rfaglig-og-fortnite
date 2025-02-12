@@ -3,14 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 
-public class ApiKeyAuthorizationFilter : IAsyncAuthorizationFilter
+public class ApiKeyAuthorizationFilter(ApiKeyService apiKeyService) : IAsyncAuthorizationFilter
 {
-    private readonly ApiKeyService apiKeyService;
-
-    public ApiKeyAuthorizationFilter(ApiKeyService apiKeyService)
-    {
-        this.apiKeyService = apiKeyService;
-    }
+    private readonly ApiKeyService apiKeyService = apiKeyService;
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {

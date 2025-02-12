@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:classroom_finder_app/Services/Apiservices.dart';
+import 'package:classroom_finder_app/Services/ApiServices.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   const LoginRegisterPage({super.key});
@@ -16,9 +16,15 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   bool loginToggle = true;
 
   @override
+  void initState() {
+    super.initState();
+
+    
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return Center(
         child: Container(
           color: Colors.grey[300],
           child: Column(
@@ -33,13 +39,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                 padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
                 child: loginToggle ? 
                   AuthButton(text: "Login", onPressed: () async {
-                    String apiKey = await ApiService.login(emailController.text, passwordController.text);
-                    showDialog(context: context, builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("API Key"),
-                        content: Text(apiKey),
-                      );
-                    });
+                    await ApiService.login(emailController.text, passwordController.text);
                   })
                   : 
                   AuthButton(text: "Register", onPressed: () async {
@@ -49,7 +49,6 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             ],
           ),
         ),
-      ),
     );
   }
 

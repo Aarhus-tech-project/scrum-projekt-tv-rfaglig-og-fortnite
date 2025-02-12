@@ -2,23 +2,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
-public class ApiKeyMiddleware
+public class ApiKeyMiddleware(RequestDelegate next, ApiKeyService apiKeyService)
 {
-    private readonly RequestDelegate _next;
-    private readonly ApiKeyService _apiKeyService;
-
-    public ApiKeyMiddleware(RequestDelegate next, ApiKeyService apiKeyService)
-    {
-        _next = next;
-        _apiKeyService = apiKeyService;
-    }
+    private readonly RequestDelegate next = next;
+    private readonly ApiKeyService apiKeyService = apiKeyService;
 
     public async Task Invoke(HttpContext context)
     {
         if (context.Request.Path.StartsWithSegments("/swagger") ||
             context.Request.Path.StartsWithSegments("/api-docs"))
         {
-            await _next(context);
+            await next(context);
             return;
         }
 
@@ -29,7 +23,7 @@ public class ApiKeyMiddleware
             return;
         }
 
-        if (!_apiKeyService.ValidateApiKey(providedApiKey, out var clientName))
+        if (!apiKeyService.ValidateApiKey(providedApiKey, out var clientName))
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Invalid or Expired API Key");
@@ -37,6 +31,6 @@ public class ApiKeyMiddleware
         }
 
         context.Items["ClientName"] = clientName;
-        await _next(context);
+        await next(context);
     }
 }
