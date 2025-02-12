@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DotNetBackend.Models
 {
@@ -23,10 +24,10 @@ namespace DotNetBackend.Models
 
         [Required]
         public int Level { get; set; }
-
-        [Required]
-        [StringLength(128)]
-        public string Site { get; set; } 
+        
+        [ForeignKey("SiteID")]
+        public int SiteID { get; set; }
+        public Site Site { get; set; } 
         
         public Room()
         {
@@ -40,7 +41,6 @@ namespace DotNetBackend.Models
             Lon = roomDTO.Lon;
             Alt = roomDTO.Alt;
             Level = roomDTO.Level;
-            Site = roomDTO.Site;
         }
     }
 }

@@ -46,14 +46,35 @@ namespace DotnetBackend.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<string>("Site")
+                    b.Property<int>("SiteID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("SiteID");
+
+                    b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("DotNetBackend.Models.Site", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Sites");
                 });
 
             modelBuilder.Entity("DotNetBackend.Models.User", b =>
@@ -85,6 +106,59 @@ namespace DotnetBackend.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DotNetBackend.Models.UserSite", b =>
+                {
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserID", "SiteID");
+
+                    b.HasIndex("SiteID");
+
+                    b.ToTable("UserSites");
+                });
+
+            modelBuilder.Entity("DotNetBackend.Models.Room", b =>
+                {
+                    b.HasOne("DotNetBackend.Models.Site", "Site")
+                        .WithMany("Rooms")
+                        .HasForeignKey("SiteID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("DotNetBackend.Models.UserSite", b =>
+                {
+                    b.HasOne("DotNetBackend.Models.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DotNetBackend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DotNetBackend.Models.Site", b =>
+                {
+                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

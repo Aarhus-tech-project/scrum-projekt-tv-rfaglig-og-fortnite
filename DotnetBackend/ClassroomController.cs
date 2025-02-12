@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
 [Route("api")]
-public class ClassroomController(ClassroomRepository classroomRepository) : Controller
+public class ClassroomController(ClassroomRepository classroomRepository, ApiKeyService apiKeyService) : Controller
 {
     private readonly ClassroomRepository classroomRepository = classroomRepository;
 

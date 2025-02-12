@@ -7,6 +7,5 @@ namespace DotNetBackend.Models
         public double Lon { get; set; } = room.Lon;
         public double Alt { get; set; } = room.Alt;
         public int Level { get; set; } = room.Level;
-        public string Site { get; set; } = room.Site;
     }
 }

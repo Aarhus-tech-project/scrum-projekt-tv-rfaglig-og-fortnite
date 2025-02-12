@@ -15,6 +15,7 @@ builder.Services.AddDbContext<MySQLContext>(options =>
 builder.Services.AddSingleton<ApiKeyService>();
 builder.Services.AddScoped<ClassroomRepository>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<SiteRepository>();
 
 // Register MySqlConnection as a service
 builder.Services.AddControllers(options =>
