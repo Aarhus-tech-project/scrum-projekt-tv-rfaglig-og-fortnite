@@ -31,4 +31,3 @@ public class ClassroomRepository(MySQLContext context)
         return await context.Rooms.FromSqlInterpolated($"SELECT *, (6371 * ACOS(COS(RADIANS({lat})) * COS(RADIANS(Lat)) * COS(RADIANS(Lon) - RADIANS({lon})) + SIN(RADIANS({lat})) * SIN(RADIANS(Lat)))) AS Distance FROM rooms WHERE Name LIKE CONCAT('%', {keyword}, '%') ORDER BY Distance ASC LIMIT {limit}").ToListAsync();
     }
 }
-

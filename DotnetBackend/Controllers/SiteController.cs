@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using DotnetBackend.Models.DTOs;
 using DotnetBackend.Repositories;
 using DotnetBackend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
        
         var sites = await siteRepository.GetUserSites(clientName!);
-        return Ok(sites);
+        return Ok(sites.Select(s=>new SiteDTO(s)));
     }
+
+
 }

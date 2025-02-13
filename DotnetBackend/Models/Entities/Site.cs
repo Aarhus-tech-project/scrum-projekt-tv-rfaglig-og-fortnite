@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DotnetBackend.Models.DTOs;
 
 namespace DotnetBackend.Models.Entities;
 
@@ -13,5 +14,15 @@ public class Site
 
     public List<Room> Rooms { get; set; } = [];
 
-    public bool IsPublic { get; set; } = false;
+    public bool IsPublic { get; set; } = false;   
+
+    public  Site(){}
+
+    public Site(SiteDTO siteDTO)
+    {
+        Name = siteDTO.Name;
+        IsPublic = siteDTO.IsPublic;
+    }
+
+
 }
