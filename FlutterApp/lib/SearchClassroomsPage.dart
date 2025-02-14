@@ -11,7 +11,7 @@ class SearchClassroomsPage extends StatefulWidget {
 }
 
 class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
-  List<Room> classrooms = [];
+  List<Room> rooms = [];
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -29,7 +29,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
   updateSearchClassrooms(String keyword) async {
     List<Room> newClassrooms = await ApiService.searchClassrooms(keyword: keyword);
     setState(() {
-      classrooms = newClassrooms;
+      rooms = newClassrooms;
     });
   }
 
@@ -48,7 +48,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                     controller: searchController,
                     onChanged: updateSearchClassrooms,
                     decoration: InputDecoration(
-                      hintText: 'Search Classrooms',
+                      hintText: 'Search Rooms',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)
                       ),
@@ -58,7 +58,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: classrooms.length,
+                    itemCount: rooms.length,
                     itemBuilder: (context, index) {
                       return ClassroomSearchItem(context, index);
                     },
@@ -90,7 +90,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
               PageRouteBuilder(
                 pageBuilder: (context, animation,
                         secondaryAnimation) =>
-                    ClassroomCompassPage(room: classrooms[index]),
+                    ClassroomCompassPage(room: rooms[index]),
                 transitionsBuilder: (context, animation,
                     secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);
@@ -119,7 +119,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                 color: Colors.black,
               ),
               Text(
-                classrooms[index].name,
+                rooms[index].name,
                 style: TextStyle(fontSize: 20, color: Colors.black),
               ),
               Text("10m", style: TextStyle(fontSize: 20, color: Colors.black)),

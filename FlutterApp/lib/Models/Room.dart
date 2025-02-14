@@ -1,10 +1,12 @@
+import 'package:classroom_finder_app/Models/Site.dart';
+
 class Room {
   String name;
   double latitude;
   double longitude;
   double altitude;
   int level;
-  String site;
+  Site site;
 
   Room({
     required this.name,
@@ -12,7 +14,7 @@ class Room {
     required this.longitude,
     required this.altitude,
     required this.level,
-    required this.site,
+    required this.site
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -22,7 +24,7 @@ class Room {
       longitude: (json['lon'] ?? 0.0).toDouble(),
       altitude: (json['alt'] ?? 0.0).toDouble(),
       level: (json['level'] ?? 0).toInt(),
-      site: json['site'] ?? '',
+      site: 
     );
   }
 }

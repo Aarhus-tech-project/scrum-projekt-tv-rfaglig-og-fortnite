@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MainPage(),
+    home: LoginRegisterPage(),
   ));
 }
 
@@ -47,6 +47,7 @@ class _MainPageState extends State<MainPage> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 230, 230, 230),
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -75,6 +76,6 @@ class _MainPageState extends State<MainPage> {
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Profile Screen', style: TextStyle(fontSize: 24)));
+    return Center(child: Text('Profile Page', style: TextStyle(fontSize: 24)));
   }
 }

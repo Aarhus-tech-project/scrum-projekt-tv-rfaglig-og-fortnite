@@ -1,3 +1,4 @@
+import 'package:classroom_finder_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/ApiServices.dart';
 
@@ -15,40 +16,61 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
   bool loginToggle = true;
 
-  @override
-  void initState() {
-    super.initState();
-
-    
+  void showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Container(
-          color: Colors.grey[300],
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-                child: LoginRegisterToggle(),
-              ),
-              InputFields(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
-                child: loginToggle ? 
-                  AuthButton(text: "Login", onPressed: () async {
-                    await ApiService.login(emailController.text, passwordController.text);
-                  })
-                  : 
-                  AuthButton(text: "Register", onPressed: () async {
-                    await ApiService.register(nameController.text, emailController.text, passwordController.text);
-                  }),
-              ),
-            ],
+    return Scaffold(
+      body: Center(
+          child: Container(
+            color: Colors.grey[300],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+                  child: LoginRegisterToggle(),
+                ),
+                InputFields(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
+                  child: loginToggle ? 
+                    AuthButton(text: "Login", onPressed: () async {
+                      try {
+                        await ApiService.login(emailController.text, passwordController.text);
+                        showSnackBar("Login Successful!", Colors.green);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
+                      } catch (e) {
+                        showSnackBar(e.toString(), Colors.red);
+                      }
+                      
+                    })
+                    : 
+                    AuthButton(text: "Register", onPressed: () async {
+                      try {
+                        await ApiService.register(nameController.text, emailController.text, passwordController.text);
+                        showSnackBar("Registration Successful!", Colors.green);
+                      } catch (e) {
+                        showSnackBar(e.toString(), Colors.red);
+                      }
+                    }),
+                ),
+              ],
+            ),
           ),
-        ),
+      ),
     );
   }
 
@@ -132,7 +154,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                     loginToggle = false;
                   });
                 },
-                child: Text('SignUp',
+                child: Text('Register',
                     style: TextStyle(color: Colors.white, fontSize: 18)),
               ),
             ),

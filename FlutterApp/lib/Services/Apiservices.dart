@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:classroom_finder_app/Models/Room.dart';
+import 'package:classroom_finder_app/Models/Site.dart';
 import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:http/http.dart' as http;
 import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
@@ -30,18 +31,19 @@ class ApiService {
     }
   }
 
-  /// Helper method for sending HTTP requests (GET, POST, etc.)
   static Future<http.Response> sendRequest(
       String endpoint, {
       String method = 'GET',
       Map<String, String>? body,
       bool requiresAuth = false,
     }) async {
-    InitializeApiKey();
+
+    ApiKey ??= await ApiKeyStorageService.getApiToken();
 
     final url = Uri.parse('$baseUrl/$endpoint');
     final headers = {
       'Content-Type': 'application/json; charset=UTF-8',
+      'X-Api-Key': ApiKey ?? '',
     };
 
     try {
@@ -68,7 +70,7 @@ class ApiService {
     } else {
       print('Request failed with status: ${response.statusCode}');
       print('Response body: ${response.body}');
-      throw Exception('HTTP Error: ${response.statusCode}');
+      throw Exception('${response.body}');
     }
   }
 
@@ -98,8 +100,10 @@ class ApiService {
       },
     );
 
-    ApiKey = response.body;
-    ApiKeyStorageService.saveApiToken(response.body);   
+    if (Apikeyservice.validateApiKey(response.body)) {
+      ApiKey = response.body;
+      ApiKeyStorageService.saveApiToken(ApiKey!);
+    }   
   }
 
   /// Fetches classrooms with optional keyword and limit
@@ -112,21 +116,19 @@ class ApiService {
     return data.map((json) => Room.fromJson(json)).toList();
   }
 
-  static Future InitializeApiKey() async {
-    if (ApiKey == null) {
-      String? storedApiKey = await ApiKeyStorageService.getApiToken();
+  static Future<List<Site>> getUserSites() async {
+    final response = await sendRequest(
+      'GetUserSites', 
+    );
+    final List<dynamic> data = json.decode(response.body);
+    return data.map((json) => Site.fromJson(json)).toList();
+  }
 
-      if(storedApiKey ==  null) {
-        onLogout?.call();
-        return;
-      }
-
-      ApiKey = storedApiKey;
-    }
-
-    if (!Apikeyservice.validateApiKey(ApiKey)) {
-      onLogout?.call();
-      return;
-    }
+  static Future<List<Site>> getNearbySites({double lat = 0, double lon = 0}) async {
+    final response = await sendRequest(
+      'GetNearbySites?lat=$lat&lon=$lon',
+    );
+    final List<dynamic> data = json.decode(response.body);
+    return data.map((json) => Site.fromJson(json)).toList();
   }
 }
