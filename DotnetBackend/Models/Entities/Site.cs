@@ -12,6 +12,18 @@ public class Site
     [StringLength(128)]
     public string Name { get; set; }
 
+    [Required]
+    public double Lat { get; set; }
+
+    [Required]
+    public double Lon { get; set; }
+
+    [Required]
+    public double Alt { get; set; }
+
+    [Required]
+    public string Adresse { get; set; }
+
     public List<Room> Rooms { get; set; } = [];
 
     public bool IsPublic { get; set; } = false;   
@@ -21,8 +33,10 @@ public class Site
     public Site(SiteDTO siteDTO)
     {
         Name = siteDTO.Name;
+        Lat = siteDTO.Lat;
+        Lon = siteDTO.Lon;
+        Alt = siteDTO.Alt;
+        Adresse = siteDTO.Adresse;
         IsPublic = siteDTO.IsPublic;
     }
-
-
 }

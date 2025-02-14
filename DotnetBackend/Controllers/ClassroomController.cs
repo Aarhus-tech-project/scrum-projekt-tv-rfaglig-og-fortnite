@@ -11,7 +11,7 @@ namespace DotnetBackend.Controllers;
 [Route("api")]
 public class ClassroomController(ClassroomRepository classroomRepository) : Controller
 {
-    [HttpPost("Classrooms")]
+    [HttpPost("AddClassrooms")]
     public async Task<IActionResult> AddClassroom([FromBody] RoomDTO room)
     {
         try
@@ -47,7 +47,7 @@ public class ClassroomController(ClassroomRepository classroomRepository) : Cont
     public async Task<IActionResult> SearchNearbyClassrooms(double lat, double lon, string keyword = "", int limit = 10)
     {
         try
-        {            
+        {
             var classrooms = await classroomRepository.SearchNearbyRoomsAsync(lat, lon, keyword, limit);
 
             if (classrooms == null)

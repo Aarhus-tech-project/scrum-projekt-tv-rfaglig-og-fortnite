@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DotnetBackend.Models.Entities;
 
-public class UserSite
+public class UserSite 
 {
     [ForeignKey("Site")]
     public int SiteID { get; set; }
@@ -15,6 +15,15 @@ public class UserSite
 
     [Required]
     public UserRole Role {get; set;}
+
+    public UserSite(int userID, int siteID, UserRole role)
+    {
+        UserID = userID;
+        SiteID = siteID;
+        Role = role;
+    }
+    
+    public UserSite(){}
 }
 
 public enum UserRole

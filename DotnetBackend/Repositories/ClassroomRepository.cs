@@ -24,6 +24,7 @@ public class ClassroomRepository(MySQLContext context)
     public async Task<List<Room>> SearchClassroomsAsync(string keyword, int limit = 10)
     {
         return await context.Rooms.Where(r => EF.Functions.Like(r.Name, $"%{keyword}%")).Take(limit).ToListAsync();
+        
     }
 
     public async Task<List<Room>> SearchNearbyRoomsAsync(double lat, double lon, string keyword, int limit = 10)
