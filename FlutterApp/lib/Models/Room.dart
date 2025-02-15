@@ -24,7 +24,7 @@ class Room {
       longitude: (json['lon'] ?? 0.0).toDouble(),
       altitude: (json['alt'] ?? 0.0).toDouble(),
       level: (json['level'] ?? 0).toInt(),
-      site: 
+      site: json['site'].Map((json) => Site.fromJson(json))
     );
   }
 }

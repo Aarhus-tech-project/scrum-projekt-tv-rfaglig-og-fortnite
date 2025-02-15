@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotnetBackend.Migrations
 {
     [DbContext(typeof(MySQLContext))]
-    [Migration("20250212181725_InitialCreate")]
+    [Migration("20250214120326_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -68,8 +68,21 @@ namespace DotnetBackend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<string>("Adresse")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("Alt")
+                        .HasColumnType("double");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("double");
+
+                    b.Property<double>("Lon")
+                        .HasColumnType("double");
 
                     b.Property<string>("Name")
                         .IsRequired()

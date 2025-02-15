@@ -23,6 +23,11 @@ namespace DotnetBackend.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Lat = table.Column<double>(type: "double", nullable: false),
+                    Lon = table.Column<double>(type: "double", nullable: false),
+                    Alt = table.Column<double>(type: "double", nullable: false),
+                    Adresse = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
