@@ -24,8 +24,6 @@ public class Site
     [Required]
     public string Adresse { get; set; }
 
-    public List<Room> Rooms { get; set; } = [];
-
     public bool IsPublic { get; set; } = false;   
 
     public  Site(){}

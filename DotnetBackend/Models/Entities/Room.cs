@@ -24,16 +24,12 @@ public class Room
 
     [Required]
     public int Level { get; set; }
-    
+
     [ForeignKey("SiteID")]
     public int SiteID { get; set; }
-    public Site Site { get; set; } 
-    
-    public Room()
-    {
-        
-    }
-    
+
+    public Room() {}
+
     public Room(RoomDTO roomDTO)
     {
         Name = roomDTO.Name;
@@ -41,5 +37,6 @@ public class Room
         Lon = roomDTO.Lon;
         Alt = roomDTO.Alt;
         Level = roomDTO.Level;
+        SiteID = roomDTO.SiteID;
     }
 }

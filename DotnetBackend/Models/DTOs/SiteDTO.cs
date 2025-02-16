@@ -7,7 +7,6 @@ public class SiteDTO
 {
     public string Name { get; set; }
 
-        
     public double Lat { get; set; }
 
     public double Lon { get; set; }
@@ -20,14 +19,13 @@ public class SiteDTO
 
     public SiteDTO(Site site)
     {
-    Name = site.Name;
-    Lat = site.Lat;
-    Lon = site.Lon;
-    Alt = site.Alt;
-    Adresse = site.Adresse;
-    IsPublic = site.IsPublic;
+        Name = site.Name;
+        Lat = site.Lat;
+        Lon = site.Lon;
+        Alt = site.Alt;
+        Adresse = site.Adresse;
+        IsPublic = site.IsPublic;
     }
 
     public SiteDTO(){}
-
 }

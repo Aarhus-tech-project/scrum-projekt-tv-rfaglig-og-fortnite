@@ -9,4 +9,5 @@ public class RoomDTO(Room room)
     public double Lon { get; set; } = room.Lon;
     public double Alt { get; set; } = room.Alt;
     public int Level { get; set; } = room.Level;
+    public int SiteID { get; set; } = room.SiteID;
 }
