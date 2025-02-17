@@ -38,6 +38,5 @@ public class Room
         Lon = roomDTO.Lon;
         Alt = roomDTO.Alt;
         Level = roomDTO.Level;
-        SiteID = roomDTO.SiteID;
     }
 }

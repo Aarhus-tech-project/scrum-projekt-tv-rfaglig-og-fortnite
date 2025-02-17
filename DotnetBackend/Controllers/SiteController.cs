@@ -18,9 +18,8 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
 
-       
         var sites = await siteRepository.GetUserSites(clientName!);
-        return Ok(sites.Select(s=>new SiteDTO(s)));
+        return Ok(sites);
     }
 
     [HttpPost("AddSite")]
