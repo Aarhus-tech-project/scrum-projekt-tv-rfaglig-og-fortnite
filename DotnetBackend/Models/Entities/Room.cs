@@ -27,6 +27,7 @@ public class Room
 
     [ForeignKey("SiteID")]
     public int SiteID { get; set; }
+    public Site Site { get; set; }
 
     public Room() {}
 

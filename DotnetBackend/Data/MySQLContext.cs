@@ -19,7 +19,7 @@ public class MySQLContext(DbContextOptions<MySQLContext> options) : DbContext(op
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Room>()
             .HasOne(r => r.Site)
-            .WithMany(s => s.Rooms)
+            .WithMany()
             .HasForeignKey(r => r.SiteID)
             .OnDelete(DeleteBehavior.Cascade);
 

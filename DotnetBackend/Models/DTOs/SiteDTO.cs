@@ -17,6 +17,8 @@ public class SiteDTO
 
     public bool IsPublic { get; set; }
 
+    public int RoomCount { get; set; }
+
     public SiteDTO(Site site)
     {
         Name = site.Name;
