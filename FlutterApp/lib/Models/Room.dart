@@ -6,7 +6,6 @@ class Room {
   double longitude;
   double altitude;
   int level;
-  Site site;
 
   Room({
     required this.name,
@@ -14,7 +13,6 @@ class Room {
     required this.longitude,
     required this.altitude,
     required this.level,
-    required this.site
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -24,7 +22,6 @@ class Room {
       longitude: (json['lon'] ?? 0.0).toDouble(),
       altitude: (json['alt'] ?? 0.0).toDouble(),
       level: (json['level'] ?? 0).toInt(),
-      site: json['site'].Map((json) => Site.fromJson(json))
     );
   }
 }

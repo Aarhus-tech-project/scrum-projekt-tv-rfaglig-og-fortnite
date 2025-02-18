@@ -3,13 +3,17 @@ import 'package:classroom_finder_app/SearchClassroomsPage.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:classroom_finder_app/SitesPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: LoginRegisterPage(),
-  ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginRegisterPage(),
+    ));
+  });
 }
 
 class MainPage extends StatefulWidget {
