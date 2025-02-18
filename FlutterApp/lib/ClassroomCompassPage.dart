@@ -131,7 +131,7 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
             children: [
               Icon(Symbols.directions_run, size: 35),
               Text(
-                  "${Geolocator.distanceBetween(startLatitude, startLongitude, targetLatitude, targetLongtitude).toStringAsFixed(2)}m",
+                  "${Geolocator.distanceBetween(startLatitude, startLongitude, targetLatitude, targetLongtitude).toStringAsFixed(0)}m",
                   style: TextStyle(fontSize: 30),
                   textAlign: TextAlign.center),
               Padding(
