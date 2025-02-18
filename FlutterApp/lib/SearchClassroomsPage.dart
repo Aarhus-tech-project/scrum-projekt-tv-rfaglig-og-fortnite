@@ -109,15 +109,26 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 Icons.room,
                 size: 25,
                 color: Colors.black,
               ),
-              Text(
-                rooms[index].name,
-                style: TextStyle(fontSize: 20, color: Colors.black),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    rooms[index].name,
+                    style: TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+                  Text(
+                    rooms[index].siteName,
+                    style: TextStyle(fontSize: 12, color: Colors.black),
+                  )
+                ],
               ),
               Text("10m", style: TextStyle(fontSize: 20, color: Colors.black)),
             ],
