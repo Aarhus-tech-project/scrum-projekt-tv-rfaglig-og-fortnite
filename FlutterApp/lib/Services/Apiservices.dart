@@ -23,7 +23,7 @@ class ApiService {
 
   static String getBaseUrl() {
     if (Platform.isAndroid) {
-      return 'http://192.168.241.82:5126/api'; // Android emulator
+      return 'http://10.0.2.2:5126/api'; // Android emulator
     } else if (Platform.isIOS) {
       return 'http://localhost:5126/api'; // iOS simulator
     } else {
@@ -105,6 +105,11 @@ class ApiService {
       ApiKey = response.body;
       ApiKeyStorageService.saveApiToken(ApiKey!);
     }
+  }
+
+  static Future<Map<String, dynamic>> fetchUserData() async {
+    final response = await sendRequest('user/UserData', requiresAuth: true);
+    return json.decode(response.body);
   }
 
   /// Fetches classrooms with optional keyword and limit

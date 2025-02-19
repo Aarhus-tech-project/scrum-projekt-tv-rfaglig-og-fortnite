@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Text(1
+                child: Text(
                   'Profile',
                   style: TextStyle(
                       fontSize: 24, decoration: TextDecoration.underline),

@@ -1,4 +1,5 @@
 import 'package:classroom_finder_app/LoginRegisterPage.dart';
+import 'package:classroom_finder_app/ProfilePage.dart';
 import 'package:classroom_finder_app/SearchClassroomsPage.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:classroom_finder_app/SitesPage.dart';
@@ -27,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     SitesPage(),
     SearchClassroomsPage(),
-    ProfileScreen(),
+    ProfilePage(),
   ];
 
   @override
@@ -74,12 +75,5 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Profile Page', style: TextStyle(fontSize: 24)));
   }
 }

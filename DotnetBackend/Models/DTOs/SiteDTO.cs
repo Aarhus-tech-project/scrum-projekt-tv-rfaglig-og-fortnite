@@ -29,5 +29,5 @@ public class SiteDTO
         IsPublic = site.IsPublic;
     }
 
-    public SiteDTO(){}
+    public SiteDTO() { }
 }
