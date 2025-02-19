@@ -20,7 +20,7 @@ public class SiteRepository(MySQLContext context)
             .ToListAsync();
     }
 
-    public async Task AddSiteAsync(string Email, Site site)
+ public async Task AddSiteAsync(string Email, Site site)
     {
         
         context.Sites.Add(site);
@@ -28,7 +28,21 @@ public class SiteRepository(MySQLContext context)
 
         if (rowsAffected <= 0)
             throw new Exception("Failed to add classroom");
+    }   
+
+    public async Task UpdateSiteAsync(UpdateSiteDTO updateSite)
+    {
+        var currentSite = await context.Sites.FindAsync(updateSite.ID);
+        if (currentSite == null)
+            throw new KeyNotFoundException("Site not found");
+
+        currentSite.UpdateSite(updateSite);
+
+        int rowsAffected = await context.SaveChangesAsync();
+        if (rowsAffected <= 0)
+            throw new Exception("Failed to update site");
     }
+
     
     public async Task AddUserToSiteAsync(string Email, Site site, UserRole Role)
     {

@@ -1,10 +1,11 @@
 using DotnetBackend.Models.Entities;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace DotnetBackend.Models.DTOs;
 
-public class SiteDTO
+public class UpdateSiteDTO
 {
+
+    public Guid ID {get; set;}
     public string Name { get; set; }
 
     public double Lat { get; set; }
@@ -18,18 +19,4 @@ public class SiteDTO
     public bool IsPublic { get; set; }
 
     public int RoomCount { get; set; }
-
-    public SiteDTO(Site site)
-    {
-        Name = site.Name;
-        Lat = site.Lat;
-        Lon = site.Lon;
-        Alt = site.Alt;
-        Adresse = site.Adresse;
-        IsPublic = site.IsPublic;
-        RoomCount = site.RoomCount;
-    }
-
-    public SiteDTO(){}
-
 }

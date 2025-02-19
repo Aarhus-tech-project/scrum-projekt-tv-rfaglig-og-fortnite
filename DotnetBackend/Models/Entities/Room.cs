@@ -7,7 +7,8 @@ namespace DotnetBackend.Models.Entities;
 public class Room
 {
     [Key]
-    public int ID { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid ID { get; set; }
 
     [Required]
     [StringLength(64)]
@@ -26,7 +27,7 @@ public class Room
     public int Level { get; set; }
 
     [ForeignKey("SiteID")]
-    public int SiteID { get; set; }
+    public Guid SiteID { get; set; }
     public Site Site { get; set; }
 
     public Room() {}

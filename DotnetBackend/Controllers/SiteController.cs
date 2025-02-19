@@ -41,7 +41,28 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         }
     }
 
-    [HttpPost("FindNearestSite")]
+    [HttpPut("UpdateSite")]
+    public async Task<IActionResult> UpdateSite(
+        [FromHeader(Name = "X-Api-Key")] string apiKey, 
+        [FromBody] UpdateSiteDTO updateSite)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName))
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            await siteRepository.UpdateSiteAsync(updateSite);
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+
+    [HttpGet("FindNearestSite")]
     public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
     {
         try

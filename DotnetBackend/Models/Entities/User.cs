@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using DotnetBackend.Models.DTOs;
 using DotnetBackend.Services;
 
@@ -7,7 +8,8 @@ namespace DotnetBackend.Models.Entities;
 public class User
 {
     [Key]
-    public int ID { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid ID { get; set; }
 
     [Required]
     [StringLength(64)]
