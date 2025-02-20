@@ -8,6 +8,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? userData;
+
   @override
   void initState() {
     super.initState();
@@ -52,9 +53,20 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
+                child: Text(style: TextStyle(fontSize: 18)),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  ApiService.onLogout?.call();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(
+                      255, 186, 31, 20), // Set the background color to red
+                ),
                 child: Text(
-                    userData != null ? 'Name: ${userData!['name']}' : '',
-                    style: TextStyle(fontSize: 18)),
+                  'Log out',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
               ),
             ],
           ),

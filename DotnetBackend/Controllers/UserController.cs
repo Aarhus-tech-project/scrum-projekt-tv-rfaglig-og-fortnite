@@ -1,4 +1,3 @@
-using DotnetBackend.Models.DTOs;
 using DotnetBackend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -24,8 +23,9 @@ namespace DotnetBackend.Controllers
                 return Unauthorized("Unauthorized");
 
             var user = await _userRepository.GetUserFromEmail(clientName!);
-            var userDTO = new UserDTO(user);
-            return Ok(userDTO);
+            return Ok(user);
         }
+
+
     }
 }
