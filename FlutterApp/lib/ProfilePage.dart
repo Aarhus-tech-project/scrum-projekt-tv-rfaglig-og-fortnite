@@ -7,21 +7,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, dynamic>? userData;
+  Map<String, String>? userInfo;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    loadUserInfo();
   }
 
-  Future<void> fetchUserData() async {
-    final data = await ApiService.fetchUserData();
+  void loadUserInfo() async {
+    final info = await ApiService.getUserInfo();
     setState(() {
-      userData = data;
+      userInfo = info?.cast<String, String>() ?? {};
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -53,7 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(style: TextStyle(fontSize: 18)),
+                child: Column(
+                  children: [
+                    Text(userInfo?['name'] ?? 'Loading...'),
+                    Text(userInfo?['sub'] ?? 'Loading...'),
+                  ],
+                ),
               ),
               ElevatedButton(
                 onPressed: () {
