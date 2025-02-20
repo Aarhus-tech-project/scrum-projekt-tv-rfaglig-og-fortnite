@@ -23,16 +23,15 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
     }
 
     [HttpPost("AddSite")]
-    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]SiteDTO site)
+    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO site)
     {
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
 
         try
         {            
-            var newSite = new Site(site);
-            await siteRepository.AddSiteAsync(apiKey, newSite);
-            await siteRepository.AddUserToSiteAsync(clientName, newSite, UserRole.Admin);
+            await siteRepository.AddSiteAsync(apiKey, site);
+            await siteRepository.AddUserToSiteAsync(clientName, new Site(site), UserRole.Admin);
             return Ok();
         }
         catch (Exception ex)
@@ -60,8 +59,6 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         }
     }
 
-
-
     [HttpGet("FindNearestSite")]
     public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
     {
@@ -72,11 +69,29 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
             if (site == null)
                 return NotFound("No matching sites found");
 
-            return Ok(site.Select(s => new SiteDTO(s)));
+            return Ok(site.Select(s => new AddSiteDTO(s)));
         }
         catch (Exception)
         {
             return StatusCode(500);
         }
+    }
+
+    [HttpDelete("DeleteSite")]
+    public async Task<IActionResult> DeleteSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid guid)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            await siteRepository.DeleteSiteAsync(apiKey, guid);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500);
+        }
+
     }
 }

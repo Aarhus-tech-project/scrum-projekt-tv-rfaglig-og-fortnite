@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace DotnetBackend.Models.DTOs;
 
-public class SiteDTO
+public class AddSiteDTO
 {
     public string Name { get; set; }
 
@@ -19,7 +19,7 @@ public class SiteDTO
 
     public int RoomCount { get; set; }
 
-    public SiteDTO(Site site)
+    public AddSiteDTO(Site site)
     {
         Name = site.Name;
         Lat = site.Lat;
@@ -30,6 +30,6 @@ public class SiteDTO
         RoomCount = site.RoomCount;
     }
 
-    public SiteDTO(){}
+    public AddSiteDTO(){}
 
 }

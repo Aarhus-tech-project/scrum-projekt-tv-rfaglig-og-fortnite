@@ -17,6 +17,7 @@ public class ClassroomController(ClassroomRepository classroomRepository) : Cont
         try
         {            
             await classroomRepository.AddClassroomAsync(new Room(room));
+            
             return Ok();
         }
         catch (Exception)
@@ -44,11 +45,11 @@ public class ClassroomController(ClassroomRepository classroomRepository) : Cont
     }
 
     [HttpGet("SearchNearbyClassrooms")]
-    public async Task<IActionResult> SearchNearbyClassrooms(double lat, double lon, string keyword = "", int limit = 10)
+    public async Task<IActionResult> SearchNearbyClassrooms(double lat, double lon, double alt, string keyword = "", int limit = 10)
     {
         try
         {
-            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(lat, lon, keyword, limit);
+            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(lat, lon, alt, keyword, limit);
 
             if (classrooms == null)
                 return NotFound("No matching classrooms found");

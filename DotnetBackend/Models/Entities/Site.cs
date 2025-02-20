@@ -7,7 +7,6 @@ namespace DotnetBackend.Models.Entities;
 public class Site
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ID { get; set; }
 
     [Required]
@@ -32,8 +31,9 @@ public class Site
 
     public  Site(){}
 
-    public Site(SiteDTO siteDTO)
+    public Site(AddSiteDTO siteDTO)
     {
+        ID = Guid.NewGuid();
         Name = siteDTO.Name;
         Lat = siteDTO.Lat;
         Lon = siteDTO.Lon;
@@ -45,6 +45,7 @@ public class Site
 
     public Site(UpdateSiteDTO updateSiteDTO)
     {
+        ID = updateSiteDTO.ID;
         Name = updateSiteDTO.Name;
         Lat = updateSiteDTO.Lat;
         Lon = updateSiteDTO.Lon;

@@ -7,7 +7,6 @@ namespace DotnetBackend.Models.Entities;
 public class Room
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ID { get; set; }
 
     [Required]
