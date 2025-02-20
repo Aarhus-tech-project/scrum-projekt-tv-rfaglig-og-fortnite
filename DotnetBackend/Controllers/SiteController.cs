@@ -18,7 +18,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
 
-        var sites = await siteRepository.GetUserSites(clientName!);
+        var sites = await siteRepository.GetUserSites(clientName!.Email);
         return Ok(sites);
     }
 
@@ -32,7 +32,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         {            
             var newSite = new Site(site);
             await siteRepository.AddSiteAsync(apiKey, newSite);
-            await siteRepository.AddUserToSiteAsync(clientName, newSite, UserRole.Admin);
+            await siteRepository.AddUserToSiteAsync(clientName!.Email, newSite, UserRole.Admin);
             return Ok();
         }
         catch (Exception ex)
