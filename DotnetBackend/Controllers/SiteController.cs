@@ -23,15 +23,16 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
     }
 
     [HttpPost("AddSite")]
-    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO site)
+    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO addSite)
     {
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
 
         try
-        {            
-            await siteRepository.AddSiteAsync(apiKey, site);
-            await siteRepository.AddUserToSiteAsync(clientName, new Site(site), UserRole.Admin);
+        {
+            Site site = new Site(addSite);
+            await siteRepository.AddSiteAsync(site);
+            await siteRepository.AddUserToSiteAsync(clientName, site, UserRole.Admin);
             return Ok();
         }
         catch (Exception ex)

@@ -20,9 +20,9 @@ public class SiteRepository(MySQLContext context)
             .ToListAsync();
     }
 
- public async Task AddSiteAsync(string Email, AddSiteDTO site)
+ public async Task AddSiteAsync(Site site)
     {
-        context.Sites.Add(new Site(site));
+        context.Sites.Add(site);
         int rowsAffected = await context.SaveChangesAsync();
 
         if (rowsAffected <= 0)
