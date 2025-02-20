@@ -12,14 +12,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    loadUserInfo();
-  }
-
-  void loadUserInfo() async {
-    final info = await ApiService.getUserInfo();
-    setState(() {
-      userInfo = info?.cast<String, String>() ?? {};
-    });
   }
 
   @override

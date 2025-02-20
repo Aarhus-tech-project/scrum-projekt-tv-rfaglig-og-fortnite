@@ -55,4 +55,9 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
             string apiKey = apiKeyService.GenerateApiKey(new PublicUserDTO(attemptedUser), TimeSpan.FromDays(30));
             return Ok(apiKey);
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500);
+        }
+    }
 }

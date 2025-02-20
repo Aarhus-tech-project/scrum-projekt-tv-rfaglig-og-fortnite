@@ -100,6 +100,10 @@ class ApiService {
         'password': password,
       },
     );
+    if (Apikeyservice.validateApiKey(response.body)) {
+      ApiKey = response.body;
+      ApiKeyStorageService.saveApiToken(ApiKey!);
+    }
   }
 
   /// Fetches classrooms with optional keyword and limit
@@ -128,12 +132,5 @@ class ApiService {
     );
     final List<dynamic> data = json.decode(response.body);
     return data.map((json) => Site.fromJson(json)).toList();
-  }
-
-  static Future<Map<String, dynamic>?> getUserInfo() async {
-    ApiKey ??= await ApiKeyStorageService.getApiToken();
-    if (ApiKey == null) return null;
-
-    return ApiKeyService.validateApiKey(ApiKey);
   }
 }

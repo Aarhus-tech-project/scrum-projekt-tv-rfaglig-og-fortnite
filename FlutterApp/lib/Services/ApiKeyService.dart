@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-class ApiKeyService {
-  static Map<String, dynamic>? validateApiKey(String? apiKey) {
-    if (apiKey == null || apiKey.isEmpty || !apiKey.contains('.')) return null;
+class Apikeyservice {
+  static bool validateApiKey(String? apiKey) {
+    if (apiKey == null || apiKey.isEmpty || !apiKey.contains('.')) return false;
 
     List<String> parts = apiKey.split('.');
-    if (parts.length != 2) return null;
+    if (parts.length != 2) return false;
 
     String payloadBase64 = parts[0];
 
@@ -15,7 +15,7 @@ class ApiKeyService {
       payloadJson =
           utf8.decode(base64Url.decode(base64Url.normalize(payloadBase64)));
     } catch (e) {
-      return null; // Invalid Base64 encoding
+      return false; // Invalid Base64 encoding
     }
 
     // Parse JSON
@@ -23,22 +23,15 @@ class ApiKeyService {
     try {
       tokenData = jsonDecode(payloadJson);
     } catch (e) {
-      return null; // Invalid JSON
+      return false; // Invalid JSON
     }
 
     // Verify expiration
-    if (!tokenData.containsKey('exp')) return null;
+    if (!tokenData.containsKey('exp')) return false;
     int expTime = tokenData['exp'];
     if (expTime < DateTime.now().millisecondsSinceEpoch ~/ 1000)
-      return null; // Expired
+      return false; // Expired
 
-    // Extract name and email
-    if (!tokenData.containsKey('sub')) return null;
-    String email = tokenData['sub'];
-
-    return {
-      'sub': email,
-      'exp': expTime,
-    };
+    return true; // API key is valid
   }
 }
