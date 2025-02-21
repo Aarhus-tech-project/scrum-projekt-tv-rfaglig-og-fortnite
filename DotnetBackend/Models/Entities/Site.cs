@@ -31,18 +31,18 @@ public class Site
 
     public  Site(){}
 
-    public Site(AddSiteDTO siteDTO)
+    public Site(AddSiteDTO addSiteDTO)
     {
         ID = Guid.NewGuid();
-        Name = siteDTO.Name;
-        Lat = siteDTO.Lat;
-        Lon = siteDTO.Lon;
-        Alt = siteDTO.Alt;
-        Adresse = siteDTO.Adresse;
-        IsPublic = siteDTO.IsPublic;
-        RoomCount = siteDTO.RoomCount;
+        Name = addSiteDTO.Name;
+        Lat = addSiteDTO.Lat;
+        Lon = addSiteDTO.Lon;
+        Alt = addSiteDTO.Alt;
+        Adresse = addSiteDTO.Address;
+        IsPublic = addSiteDTO.IsPublic;
     }
 
+    /*
     public Site(UpdateSiteDTO updateSiteDTO)
     {
         ID = updateSiteDTO.ID;
@@ -55,6 +55,19 @@ public class Site
         RoomCount = updateSiteDTO.RoomCount;
     }
 
+
+    public Site(ShowSiteDTO showSiteDTO)
+    {
+        ID = showSiteDTO.ID;
+        Name = showSiteDTO.Name;
+        Lat = showSiteDTO.Lat;
+        Lon = showSiteDTO.Lon;
+        Alt = showSiteDTO.Alt;
+        Adresse = showSiteDTO.Adresse;
+        IsPublic = showSiteDTO.IsPublic;
+        RoomCount = showSiteDTO.RoomCount;
+    }
+
     public void UpdateSite(UpdateSiteDTO updateSite)
     {
 
@@ -65,5 +78,5 @@ public class Site
         Adresse = updateSite.Adresse;
         IsPublic = updateSite.IsPublic;
         RoomCount = updateSite.RoomCount;   
-    }
+    } */
 }

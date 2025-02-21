@@ -20,6 +20,25 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
         var sites = await siteRepository.GetUserSites(clientName!);
         return Ok(sites);
+
+    }
+
+    [HttpGet("FindNearestSite")]
+    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
+    {
+        try
+        {
+            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
+
+            if (site == null)
+                return NotFound("No matching sites found");
+
+            return Ok(site.Select(s => new AddSiteDTO(s)));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
     [HttpPost("AddSite")]
@@ -60,23 +79,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         }
     }
 
-    [HttpGet("FindNearestSite")]
-    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
-    {
-        try
-        {
-            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
 
-            if (site == null)
-                return NotFound("No matching sites found");
-
-            return Ok(site.Select(s => new AddSiteDTO(s)));
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
-    }
 
     [HttpDelete("DeleteSite")]
     public async Task<IActionResult> DeleteSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid guid)

@@ -8,12 +8,12 @@ namespace DotnetBackend.Repositories;
 
 public class SiteRepository(MySQLContext context)
 {
-    public async Task<List<AddSiteDTO>> GetUserSites(string Email)
+    public async Task<List<ShowSiteDTO>> GetUserSites(string Email)
     {
         return await context.UserSites
             .Where(us => us.User.Email == Email)
             .Select(us => us.Site)
-            .Select(site => new AddSiteDTO(site)
+            .Select(site => new ShowSiteDTO(site)
             {
                 RoomCount = context.Rooms.Count(r => r.SiteID == site.ID)
             })

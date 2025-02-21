@@ -3,29 +3,15 @@ using DotnetBackend.Models;
 using DotnetBackend.Models.DTOs;
 using DotnetBackend.Models.Entities;
 using DotnetBackend.Repositories;
+using DotnetBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
 namespace DotnetBackend.Controllers;
 
 [Route("api")]
-public class ClassroomController(ClassroomRepository classroomRepository) : Controller
+public class ClassroomController(ClassroomRepository classroomRepository, ApiKeyService apiKeyService) : Controller
 {
-    [HttpPost("AddClassrooms")]
-    public async Task<IActionResult> AddClassroom([FromBody] RoomDTO room)
-    {
-        try
-        {            
-            await classroomRepository.AddClassroomAsync(new Room(room));
-            
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
-    }
-
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> SearchClassrooms(string keyword = "", int limit = 10)
     {
@@ -36,7 +22,7 @@ public class ClassroomController(ClassroomRepository classroomRepository) : Cont
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
             
-            return Ok(classrooms.Select(c => new RoomDTO(c)));
+            return Ok(classrooms.Select(c => new AddRoomDTO(c)));
         }
         catch (Exception)
         {
@@ -54,7 +40,25 @@ public class ClassroomController(ClassroomRepository classroomRepository) : Cont
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
 
-            return Ok(classrooms.Select(c => new RoomDTO(c)));
+            return Ok(classrooms.Select(c => new AddRoomDTO(c)));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+    }
+
+    [HttpPost("AddClassrooms")]
+    public async Task<IActionResult> AddClassroom([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody] AddRoomDTO addRoomDTO, Guid siteID)
+    {
+         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            await classroomRepository.AddClassroomAsync(new Room(addRoomDTO, siteID));
+
+            return Ok();
         }
         catch (Exception)
         {

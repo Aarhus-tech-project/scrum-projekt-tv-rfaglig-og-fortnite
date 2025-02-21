@@ -28,6 +28,7 @@ public class User
 
     public User(){}
 
+    /*
     public User(RegisterUserDTO registerUserDTO)
     {
         ID = Guid.NewGuid();
@@ -37,4 +38,5 @@ public class User
 
         CreatedAt = DateTime.Now;
     }
+    */
 }
