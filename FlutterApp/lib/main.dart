@@ -1,3 +1,4 @@
+import 'package:classroom_finder_app/AddSitePage.dart';
 import 'package:classroom_finder_app/LoginRegisterPage.dart';
 import 'package:classroom_finder_app/SearchClassroomsPage.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
@@ -8,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: LoginRegisterPage(),
+    home: Addsitepage(),
   ));
 }
 
