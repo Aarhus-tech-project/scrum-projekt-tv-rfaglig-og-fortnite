@@ -22,9 +22,9 @@ public class ApiKeyService
         return $"{base64Payload}.{signature}";
     }
 
-    public bool ValidateApiKey(string apiKey, out PublicUserDTO? user)
+    public bool ValidateApiKey(string apiKey, out PublicUserDTO user)
     {
-        user = null;
+        user = new PublicUserDTO();
         if (string.IsNullOrEmpty(apiKey) || !apiKey.Contains('.'))
             return false;
 
@@ -44,9 +44,9 @@ public class ApiKeyService
         if (tokenData.GetProperty("exp").GetInt64()<DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             return false;
 
-        user!.Name = tokenData.GetProperty("sub").GetProperty("name").GetString()!;
-        user!.Email = tokenData.GetProperty("sub").GetProperty("email").GetString()!;
-        user!.CreatedAt = tokenData.GetProperty("sub").GetProperty("createdAt").GetDateTime()!;
+        user.Name = tokenData.GetProperty("sub").GetProperty("Name").GetString()!;
+        user.Email = tokenData.GetProperty("sub").GetProperty("Email").GetString()!;
+        user.CreatedAt = tokenData.GetProperty("sub").GetProperty("CreatedAt").GetDateTime()!;
         return true;
     }
 

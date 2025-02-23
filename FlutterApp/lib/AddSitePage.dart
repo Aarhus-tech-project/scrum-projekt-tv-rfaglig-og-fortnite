@@ -3,17 +3,38 @@ import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:geolocator/geolocator.dart';
 
 class Addsitepage extends StatefulWidget {
-  const Addsitepage({super.key});
+  final AddEditSiteDTO? site;
+
+  const Addsitepage({super.key, this.site});
 
   @override
   State<Addsitepage> createState() => _AddsitepageState();
 }
 
 class _AddsitepageState extends State<Addsitepage> {
-  AddEditSiteDTO site = AddEditSiteDTO();
+  late AddEditSiteDTO addEditSite;
   TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   bool isPrivate = false;
+
+  late bool createNew;
+
+  @override
+  void initState() {
+    super.initState();
+
+    createNew = widget.site == null;
+    if (createNew) {
+      addEditSite = AddEditSiteDTO();
+    }
+    else {
+      addEditSite = widget.site!;
+    }
+
+    nameController.text = addEditSite.name;
+    addressController.text = addEditSite.address;
+    isPrivate = addEditSite.isPrivate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +48,7 @@ class _AddsitepageState extends State<Addsitepage> {
             children: [
               // Page Title
               Text(
-                'Add Site',
+                createNew ? 'Add Site' : 'Edit Site',
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               SizedBox(height: 16),
@@ -38,7 +59,7 @@ class _AddsitepageState extends State<Addsitepage> {
               SizedBox(height: 12),
 
               // Address Input Field
-              buildTextField(emailController, 'Address', 'Enter Site Address'),
+              buildTextField(addressController, 'Address', 'Enter Site Address'),
 
               SizedBox(height: 16),
 
@@ -71,7 +92,7 @@ class _AddsitepageState extends State<Addsitepage> {
               if (isPrivate)
                 buildListContainer(
                   title: "Members",
-                  items: site.users,
+                  items: addEditSite.users,
                   getDisplayText: (user) => user.email,
                   onEdit: (user) {
                     showAddEditUserDialog(user);
@@ -86,7 +107,7 @@ class _AddsitepageState extends State<Addsitepage> {
               // ROOMS LIST
               buildListContainer(
                 title: "Rooms",
-                items: site.rooms,
+                items: addEditSite.rooms,
                 getDisplayText: (room) => room.name,
                 onEdit: (room) {
                   showAddEditRoomDialog(room);
@@ -97,6 +118,28 @@ class _AddsitepageState extends State<Addsitepage> {
                 },
                 color: Colors.grey,
               ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Cancel", style: TextStyle(color: Colors.red)),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (createNew) {
+                          // Call AddSite On API 
+                        }
+
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(createNew ? "Add" : "Save"),
+                  )
+                ],
+              )
             ],
           ),
         ),
@@ -104,89 +147,90 @@ class _AddsitepageState extends State<Addsitepage> {
     );
   }
 
-void showAddEditUserDialog(AddEditUserSiteDTO? user) {
-  TextEditingController userEmailController = TextEditingController();
+  void showAddEditUserDialog(AddEditUserSiteDTO? user) {
+    TextEditingController emailController = TextEditingController();
 
-  bool createNew = user == null;
-  if (createNew) {
-    user = AddEditUserSiteDTO();
-  }
+    bool createNew = user == null;
+    if (createNew) {
+      user = AddEditUserSiteDTO();
+    }
 
-  userEmailController.text = user.email;
-  UserRole selectedRole = user.role;
+    emailController.text = user.email;
+    UserRole selectedRole = user.role;
 
-  userEmailController.addListener(() {
-    user!.email = userEmailController.text;
-  },);
-
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: Text(createNew ? "Add Member" : "Edit Member"),
-        content: StatefulBuilder(
-          builder: (context, setDialogState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: userEmailController,
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    hintText: "Enter email",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: Text(createNew ? "Add Member" : "Edit Member"),
+          content: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                      hintText: "Enter email",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
                   ),
-                ),
-                SizedBox(height: 12),
-                Text('Role'),
-                DropdownButton<UserRole>(
-                  value: selectedRole,
-                  onChanged: (UserRole? value) {
-                    if (value != null) {
-                      setDialogState(() {
-                        selectedRole = value;
-                        user!.role = value;
-                      });
-                    }
-                  },
-                  items: UserRole.values.map((UserRole role) {
-                    return DropdownMenuItem<UserRole>(
-                      value: role,
-                      child: Text(role.toString().split('.').last),
-                    );
-                  }).toList(),
-                )
-              ],
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
+                  SizedBox(height: 12),
+                  Text('Role'),
+                  DropdownButton<UserRole>(
+                    value: selectedRole,
+                    onChanged: (UserRole? value) {
+                      if (value != null) {
+                        setDialogState(() {
+                          selectedRole = value;
+                          user!.role = value;
+                        });
+                      }
+                    },
+                    items: UserRole.values.map((UserRole role) {
+                      return DropdownMenuItem<UserRole>(
+                        value: role,
+                        child: Text(role.toString().split('.').last),
+                      );
+                    }).toList(),
+                  )
+                ],
+              );
             },
-            child: Text("Cancel", style: TextStyle(color: Colors.red)),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (userEmailController.text.isNotEmpty) {
-                setState(() {
-                  if (createNew) {
-                    site.users.add(user!);
-                  }
-                });
+          actions: [
+            TextButton(
+              onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
-              }
-            },
-            child: Text(createNew ? "Add" : "Save"),
-          ),
-        ],
-      );
-    },
-  );
-}
+              },
+              child: Text("Cancel", style: TextStyle(color: Colors.red)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (user == null) return;
 
+                setState(() {
+                  user!.email = emailController.text;
+                });
+                user.role = selectedRole;
+
+                if (createNew) {
+                  setState(() {
+                    addEditSite.users.add(user!);
+                  });
+                }
+
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: Text(createNew ? "Add" : "Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void showAddEditRoomDialog(AddEditRoomDTO? room) {
     TextEditingController nameController = TextEditingController();
@@ -216,9 +260,11 @@ void showAddEditUserDialog(AddEditUserSiteDTO? user) {
           content: StatefulBuilder(
             builder: (context, setDialogState) {
               return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: nameController,
+                    keyboardType: TextInputType.numberWithOptions(signed: true),
                     decoration: InputDecoration(
                       labelText: "Name",
                       hintText: "Enter name",
@@ -262,7 +308,6 @@ void showAddEditUserDialog(AddEditUserSiteDTO? user) {
                           controller: latController,
                           decoration: InputDecoration(
                             labelText: "Lat",
-                            hintText: "Enter name",
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
@@ -273,7 +318,6 @@ void showAddEditUserDialog(AddEditUserSiteDTO? user) {
                           controller: lonController,
                           decoration: InputDecoration(
                             labelText: "Lon",
-                            hintText: "Enter name",
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
@@ -284,7 +328,6 @@ void showAddEditUserDialog(AddEditUserSiteDTO? user) {
                           controller: altController,
                           decoration: InputDecoration(
                             labelText: "Alt",
-                            hintText: "Enter name",
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
@@ -304,13 +347,25 @@ void showAddEditUserDialog(AddEditUserSiteDTO? user) {
             ),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.isNotEmpty) {
+                if (room == null) return;
+                
+                setState(() {
+                  room!.name = nameController.text;
+                });
+                room.lat = double.parse(latController.text);
+                room.lon = double.parse(lonController.text);
+                room.alt = double.parse(altController.text);
+                room.level = int.parse(levelController.text);
+
+                if (createNew) {
                   setState(() {
+                    addEditSite.rooms.add(room!);
                   });
-                  Navigator.of(context).pop();
                 }
+
+                Navigator.of(context).pop();
               },
-              child: Text("Add"),
+              child: Text(createNew ? "Add" : "Save"),
             ),
           ],
         );

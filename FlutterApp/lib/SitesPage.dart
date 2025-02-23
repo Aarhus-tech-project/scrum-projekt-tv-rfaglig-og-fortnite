@@ -1,4 +1,6 @@
+import 'package:classroom_finder_app/AddSitePage.dart';
 import 'package:classroom_finder_app/ClassroomCompassPage.dart';
+import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +40,16 @@ class _SitesPageState extends State<SitesPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(backgroundColor: const Color.fromARGB(255, 96, 154, 253), child: Icon(Icons.add, color: Colors.white,), onPressed: () {}),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color.fromARGB(255, 96, 154, 253), 
+          child: Icon(Icons.add, color: Colors.white,), 
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Addsitepage()),
+            );
+          }
+        ),
 
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -72,12 +83,30 @@ class _SitesPageState extends State<SitesPage> {
                               '${mySites[index].roomCount.toString()} Room(s)',
                               style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
+                            IconButton(
+                              onPressed:() {
+                                // Check if i have access to edit.
+
+                                // Get the id of the site i want to edit.
+
+                                // Make a request to rest api to get the AddEditSiteDTO from the id
+                                AddEditSiteDTO site = AddEditSiteDTO();
+
+                                // Navigate to the AddSitePage and pass the AddEditSiteDTO.
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Addsitepage(site: site)),
+                                );
+                              }, 
+                              icon: Icon(Icons.edit)
+                            )
                           ],
                         ),
                       );
                   },
                 ),
               ),
+              /*
               Divider(thickness: 5,),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -105,6 +134,7 @@ class _SitesPageState extends State<SitesPage> {
                   },
                 ),
               ),
+              */
             ],
           ),
         ),
