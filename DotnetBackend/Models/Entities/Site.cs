@@ -7,7 +7,6 @@ namespace DotnetBackend.Models.Entities;
 public class Site
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ID { get; set; }
 
     [Required]
@@ -32,19 +31,21 @@ public class Site
 
     public  Site(){}
 
-    public Site(SiteDTO siteDTO)
+    public Site(AddSiteDTO addSiteDTO)
     {
-        Name = siteDTO.Name;
-        Lat = siteDTO.Lat;
-        Lon = siteDTO.Lon;
-        Alt = siteDTO.Alt;
-        Adresse = siteDTO.Adresse;
-        IsPublic = siteDTO.IsPublic;
-        RoomCount = siteDTO.RoomCount;
+        ID = Guid.NewGuid();
+        Name = addSiteDTO.Name;
+        Lat = addSiteDTO.Lat;
+        Lon = addSiteDTO.Lon;
+        Alt = addSiteDTO.Alt;
+        Adresse = addSiteDTO.Address;
+        IsPublic = addSiteDTO.IsPublic;
     }
 
+    /*
     public Site(UpdateSiteDTO updateSiteDTO)
     {
+        ID = updateSiteDTO.ID;
         Name = updateSiteDTO.Name;
         Lat = updateSiteDTO.Lat;
         Lon = updateSiteDTO.Lon;
@@ -52,6 +53,19 @@ public class Site
         Adresse = updateSiteDTO.Adresse;
         IsPublic = updateSiteDTO.IsPublic;
         RoomCount = updateSiteDTO.RoomCount;
+    }
+
+
+    public Site(ShowSiteDTO showSiteDTO)
+    {
+        ID = showSiteDTO.ID;
+        Name = showSiteDTO.Name;
+        Lat = showSiteDTO.Lat;
+        Lon = showSiteDTO.Lon;
+        Alt = showSiteDTO.Alt;
+        Adresse = showSiteDTO.Adresse;
+        IsPublic = showSiteDTO.IsPublic;
+        RoomCount = showSiteDTO.RoomCount;
     }
 
     public void UpdateSite(UpdateSiteDTO updateSite)
@@ -64,5 +78,5 @@ public class Site
         Adresse = updateSite.Adresse;
         IsPublic = updateSite.IsPublic;
         RoomCount = updateSite.RoomCount;   
-    }
+    } */
 }

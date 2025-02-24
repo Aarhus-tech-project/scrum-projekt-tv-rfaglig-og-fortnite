@@ -20,19 +20,38 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
         var sites = await siteRepository.GetUserSites(clientName!);
         return Ok(sites);
+
+    }
+
+    [HttpGet("FindNearestSite")]
+    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
+    {
+        try
+        {
+            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
+
+            if (site == null)
+                return NotFound("No matching sites found");
+
+            return Ok(site.Select(s => new AddSiteDTO(s)));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
     [HttpPost("AddSite")]
-    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]SiteDTO site)
+    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO addSite)
     {
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
 
         try
-        {            
-            var newSite = new Site(site);
-            await siteRepository.AddSiteAsync(apiKey, newSite);
-            await siteRepository.AddUserToSiteAsync(clientName, newSite, UserRole.Admin);
+        {
+            Site site = new Site(addSite);
+            await siteRepository.AddSiteAsync(site);
+            await siteRepository.AddUserToSiteAsync(clientName, site, UserRole.Admin);
             return Ok();
         }
         catch (Exception ex)
@@ -62,21 +81,21 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
 
 
-    [HttpGet("FindNearestSite")]
-    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
+    [HttpDelete("DeleteSite")]
+    public async Task<IActionResult> DeleteSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid guid)
     {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
+            return Unauthorized("Unauthorized");
+
         try
         {
-            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
-
-            if (site == null)
-                return NotFound("No matching sites found");
-
-            return Ok(site.Select(s => new SiteDTO(s)));
+            await siteRepository.DeleteSiteAsync(apiKey, guid);
+            return Ok();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return StatusCode(500);
         }
+
     }
 }

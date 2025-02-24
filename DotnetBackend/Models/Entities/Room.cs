@@ -7,7 +7,6 @@ namespace DotnetBackend.Models.Entities;
 public class Room
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ID { get; set; }
 
     [Required]
@@ -30,14 +29,20 @@ public class Room
     public Guid SiteID { get; set; }
     public Site Site { get; set; }
 
+    public Room(AddRoomDTO addRoomDTO, Guid siteID)
+    {
+        ID = Guid.NewGuid();
+        Name = addRoomDTO.Name;
+        Lat = addRoomDTO.Lat;
+        Lon = addRoomDTO.Lon;
+        Alt = addRoomDTO.Alt;
+        Level = addRoomDTO.Level;
+        SiteID = siteID;
+
+    }
+
+
+
     public Room() {}
 
-    public Room(RoomDTO roomDTO)
-    {
-        Name = roomDTO.Name;
-        Lat = roomDTO.Lat;
-        Lon = roomDTO.Lon;
-        Alt = roomDTO.Alt;
-        Level = roomDTO.Level;
-    }
 }

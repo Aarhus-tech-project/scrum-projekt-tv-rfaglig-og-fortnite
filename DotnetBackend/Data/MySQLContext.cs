@@ -57,5 +57,16 @@ public class MySQLContext(DbContextOptions<MySQLContext> options) : DbContext(op
             .HasOne(us => us.Site)
             .WithMany ()
             .HasForeignKey(us => us.SiteID);
+
+        modelBuilder.Entity<UserSite>()
+            .Property(us => us.UserID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter);
+
+        modelBuilder.Entity<UserSite>()
+            .Property(us => us.SiteID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter);
+
     }
 }

@@ -15,8 +15,6 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
     {
         try 
         {
-
-    
         if (!EmailService.IsValidEmail(registerUser.Email))
             return BadRequest("Invalid Email");
 
