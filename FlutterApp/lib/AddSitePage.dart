@@ -304,7 +304,7 @@ class _AddsitepageState extends State<Addsitepage> {
                     children: [
                       Expanded(
                         child: TextField(
-                          readOnly: !autoLocation,
+                          readOnly: autoLocation,
                           controller: latController,
                           decoration: InputDecoration(
                             labelText: "Lat",
@@ -315,6 +315,7 @@ class _AddsitepageState extends State<Addsitepage> {
                       SizedBox(width: 12,),
                       Expanded(
                         child: TextField(
+                          readOnly: autoLocation,
                           controller: lonController,
                           decoration: InputDecoration(
                             labelText: "Lon",
@@ -325,6 +326,7 @@ class _AddsitepageState extends State<Addsitepage> {
                       SizedBox(width: 12,),
                       Expanded(
                         child: TextField(
+                          readOnly: autoLocation,
                           controller: altController,
                           decoration: InputDecoration(
                             labelText: "Alt",
