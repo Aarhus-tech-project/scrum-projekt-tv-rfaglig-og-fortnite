@@ -1,6 +1,7 @@
 using DotnetBackend.Models;
 using DotnetBackend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data;
@@ -17,6 +18,27 @@ public class MySQLContext(DbContextOptions<MySQLContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        var guidToBinaryConverter = new ValueConverter<Guid, byte[]>(
+            guid => guid.ToByteArray(),
+            bytes => new Guid(bytes) 
+        );
+
+        modelBuilder.Entity<Site>()
+            .Property(e => e.ID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter)
+            .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
+        modelBuilder.Entity<Room>()
+            .Property(e => e.ID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter)
+            .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
+        modelBuilder.Entity<User>()
+            .Property(e => e.ID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter)
+            .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
         modelBuilder.Entity<Room>()
             .HasOne(r => r.Site)
             .WithMany()
@@ -35,5 +57,16 @@ public class MySQLContext(DbContextOptions<MySQLContext> options) : DbContext(op
             .HasOne(us => us.Site)
             .WithMany ()
             .HasForeignKey(us => us.SiteID);
+
+        modelBuilder.Entity<UserSite>()
+            .Property(us => us.UserID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter);
+
+        modelBuilder.Entity<UserSite>()
+            .Property(us => us.SiteID)
+            .HasColumnType("BINARY(16)")
+            .HasConversion(guidToBinaryConverter);
+
     }
 }

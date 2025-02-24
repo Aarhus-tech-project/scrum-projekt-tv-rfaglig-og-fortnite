@@ -20,10 +20,11 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
         var sites = await siteRepository.GetUserSites(clientName!.Email);
         return Ok(sites);
+
     }
 
-    [HttpPost("AddSite")]
-    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]SiteDTO site)
+    [HttpPost("Site")]
+    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO site)
     {
         if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
             return Unauthorized("Unauthorized");
@@ -31,7 +32,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         try
         {            
             var newSite = new Site(site);
-            await siteRepository.AddSiteAsync(apiKey, newSite);
+            await siteRepository.AddSiteAsync(newSite);
             await siteRepository.AddUserToSiteAsync(clientName!.Email, newSite, UserRole.Admin);
             return Ok();
         }
@@ -51,11 +52,69 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
             if (site == null)
                 return NotFound("No matching sites found");
 
-            return Ok(site.Select(s => new SiteDTO(s)));
+            return Ok(site.Select(s => new AddSiteDTO(s)));
         }
         catch (Exception)
         {
             return StatusCode(500);
         }
+    }
+
+    [HttpPost("AddSite")]
+    public async Task<IActionResult> AddSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody]AddSiteDTO addSite)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            Site site = new Site(addSite);
+            await siteRepository.AddSiteAsync(site);
+            await siteRepository.AddUserToSiteAsync(clientName, site, UserRole.Admin);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500);
+        }
+    }
+
+    [HttpPut("UpdateSite")]
+    public async Task<IActionResult> UpdateSite(
+        [FromHeader(Name = "X-Api-Key")] string apiKey, 
+        [FromBody] UpdateSiteDTO updateSite)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName))
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            await siteRepository.UpdateSiteAsync(updateSite);
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+
+    [HttpDelete("DeleteSite")]
+    public async Task<IActionResult> DeleteSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid guid)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var clientName)) 
+            return Unauthorized("Unauthorized");
+
+        try
+        {
+            await siteRepository.DeleteSiteAsync(apiKey, guid);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500);
+        }
+
     }
 }
