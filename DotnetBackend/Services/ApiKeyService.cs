@@ -41,7 +41,7 @@ public class ApiKeyService
 
         // Deserialize and check expiration
         var tokenData = JsonSerializer.Deserialize<JsonElement>(payload);
-        if (tokenData.GetProperty("exp").GetInt64()<DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (tokenData.GetProperty("exp").GetInt64() < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             return false;
 
         user!.Name = tokenData.GetProperty("sub").GetProperty("name").GetString()!;

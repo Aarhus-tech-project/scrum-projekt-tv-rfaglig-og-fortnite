@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:classroom_finder_app/Services/ApiKeyService.dart';
+import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 
@@ -7,11 +12,25 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, String>? userInfo;
+  Map<String, dynamic>? userInfo;
+  String? userName;
 
   @override
   void initState() {
     super.initState();
+    user();
+  }
+
+  void user() async {
+    String? apiKey = await ApiKeyStorageService.getApiToken();
+
+    userInfo = Apikeyservice.validateApiKey(apiKey);
+    if (userInfo != null && userInfo!['sub'] != null) {
+      Map<String, dynamic> subData = userInfo!['sub'];
+      setState(() {
+        userName = subData['Name'];
+      });
+    }
   }
 
   @override
@@ -48,8 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(userInfo?['name'] ?? 'Loading...'),
-                    Text(userInfo?['sub'] ?? 'Loading...'),
+                    Text(userName ?? 'Loading...'),
                   ],
                 ),
               ),

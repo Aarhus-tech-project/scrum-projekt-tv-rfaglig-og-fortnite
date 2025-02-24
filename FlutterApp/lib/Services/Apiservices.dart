@@ -37,8 +37,6 @@ class ApiService {
     Map<String, String>? body,
     bool requiresAuth = false,
   }) async {
-    ApiKey ??= await ApiKeyStorageService.getApiToken();
-
     final url = Uri.parse('$baseUrl/$endpoint');
     final headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -100,15 +98,20 @@ class ApiService {
         'password': password,
       },
     );
-    if (Apikeyservice.validateApiKey(response.body)) {
-      ApiKey = response.body;
-      ApiKeyStorageService.saveApiToken(ApiKey!);
-    }
+
+    ApiKeyStorageService.saveApiToken(response.body);
+    ApiKey = response.body;
   }
 
   /// Fetches classrooms with optional keyword and limit
   static Future<List<Room>> searchClassrooms(
       {String keyword = '', int limit = 5}) async {
+    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+      {
+        onLogout?.call();
+        throw Exception('Invalid API key');
+      }
+    }
     final response = await sendRequest(
       'searchclassrooms?keyword=$keyword&limit=$limit',
       requiresAuth: true,
@@ -118,6 +121,12 @@ class ApiService {
   }
 
   static Future<List<Site>> getUserSites() async {
+    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+      {
+        onLogout?.call();
+        throw Exception('Invalid API key');
+      }
+    }
     final response = await sendRequest(
       'GetUserSites',
     );
@@ -127,6 +136,12 @@ class ApiService {
 
   static Future<List<Site>> getNearbySites(
       {double lat = 0, double lon = 0}) async {
+    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+      {
+        onLogout?.call();
+        throw Exception('Invalid API key');
+      }
+    }
     final response = await sendRequest(
       'GetNearbySites?lat=$lat&lon=$lon',
     );

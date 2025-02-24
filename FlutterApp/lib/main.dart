@@ -1,6 +1,8 @@
 import 'package:classroom_finder_app/LoginRegisterPage.dart';
 import 'package:classroom_finder_app/ProfilePage.dart';
 import 'package:classroom_finder_app/SearchClassroomsPage.dart';
+import 'package:classroom_finder_app/Services/ApiKeyService.dart';
+import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:classroom_finder_app/SitesPage.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +11,20 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginRegisterPage(),
-    ));
+      .then((_) async {
+    String? apiKey = await ApiKeyStorageService.getApiToken();
+    if (!Apikeyservice.validateApiKey(apiKey)['isValid'] == true) {
+      runApp(MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MainPage(),
+      ));
+    } else {
+      ApiKeyStorageService.deleteApiToken();
+      runApp(MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginRegisterPage(),
+      ));
+    }
   });
 }
 
