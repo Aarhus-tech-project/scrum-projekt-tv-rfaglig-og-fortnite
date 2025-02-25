@@ -21,6 +21,15 @@ class _ProfilePageState extends State<ProfilePage> {
     user();
   }
 
+  void deleteUser() async {
+    try {
+      String? apiKey = await ApiKeyStorageService.getApiToken();
+      ApiService.deleteUser(apiKey!);
+    } catch (e) {
+      print('error');
+    }
+  }
+
   void user() async {
     String? apiKey = await ApiKeyStorageService.getApiToken();
 
@@ -81,6 +90,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: Text(
                   'Log out',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  deleteUser();
+                  ApiService.onLogout?.call();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(
+                      255, 186, 31, 20), // Set the background color to red
+                ),
+                child: Text(
+                  'Delete Account',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),

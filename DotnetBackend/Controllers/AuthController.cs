@@ -60,4 +60,35 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
             return StatusCode(500);
         }
     }
+
+    [HttpDelete("DeleteAccount")]
+    public async Task<IActionResult> DeleteAccount([FromHeader(Name = "X-Api-Key")] string apikey)
+    {
+        if (!apiKeyService.ValidateApiKey(apikey, out var user))
+
+            return Unauthorized("Unauthorized");
+        try
+        {
+            // Get the email of the currently logged-in user
+            var loggedInUserEmail = User.FindFirst(user.Email)?.Value;
+
+            // Validate that the provided email matches the logged-in user's email
+            if (loggedInUserEmail == null || !loggedInUserEmail.Equals(user.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                return Unauthorized("You can only delete your own account.");
+            }
+
+            var users = await userRepository.DeleteUserByEmail(user.Email);
+            if (users == null)
+            {
+                return NotFound("User not found");
+            }
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500);
+        }
+    }
+
 }

@@ -72,6 +72,29 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteUser(String apiKey) async {
+    final url = Uri.parse('$baseUrl/auth/DeleteUser');
+    final headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-Api-Key': apiKey,
+    };
+
+    try {
+      final response = await http.delete(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        print('User deleted successfully');
+        ApiKeyStorageService.deleteApiToken();
+      } else {
+        print('Failed to delete user: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('HTTP Error: $e');
+      throw Exception('Request failed: $e');
+    }
+  }
+
   /// Registers a new user
   static Future<void> register(
       String name, String email, String password) async {
@@ -99,19 +122,18 @@ class ApiService {
       },
     );
 
-    ApiKeyStorageService.saveApiToken(response.body);
+    await ApiKeyStorageService.saveApiToken(response.body);
     ApiKey = response.body;
   }
 
   /// Fetches classrooms with optional keyword and limit
   static Future<List<Room>> searchClassrooms(
       {String keyword = '', int limit = 5}) async {
-    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
-      {
-        onLogout?.call();
-        throw Exception('Invalid API key');
-      }
-    }
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
       'searchclassrooms?keyword=$keyword&limit=$limit',
       requiresAuth: true,
@@ -121,12 +143,11 @@ class ApiService {
   }
 
   static Future<List<Site>> getUserSites() async {
-    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
-      {
-        onLogout?.call();
-        throw Exception('Invalid API key');
-      }
-    }
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
       'GetUserSites',
     );
@@ -136,12 +157,11 @@ class ApiService {
 
   static Future<List<Site>> getNearbySites(
       {double lat = 0, double lon = 0}) async {
-    if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
-      {
-        onLogout?.call();
-        throw Exception('Invalid API key');
-      }
-    }
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
       'GetNearbySites?lat=$lat&lon=$lon',
     );
