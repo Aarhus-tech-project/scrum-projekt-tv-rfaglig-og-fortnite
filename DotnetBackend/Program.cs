@@ -17,7 +17,7 @@ builder.Services.AddDbContext<MySQLContext>(options =>
         ServerVersion.AutoDetect(connectionString)
     ));
 builder.Services.AddSingleton<ApiKeyService>();
-builder.Services.AddScoped<ClassroomRepository>();
+builder.Services.AddScoped<RoomRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<SiteRepository>();
 

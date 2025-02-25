@@ -23,11 +23,9 @@ public class Site
     public double Alt { get; set; }
 
     [Required]
-    public string Adresse { get; set; }
+    public string Address { get; set; }
 
-    public bool IsPublic { get; set; } = false;   
-
-    public int RoomCount {get; set;}
+    public bool IsPrivate { get; set; } = false;   
 
     public  Site(){}
 
@@ -38,45 +36,18 @@ public class Site
         Lat = addSiteDTO.Lat;
         Lon = addSiteDTO.Lon;
         Alt = addSiteDTO.Alt;
-        Adresse = addSiteDTO.Address;
-        IsPublic = addSiteDTO.IsPublic;
+        Address = addSiteDTO.Address;
+        IsPrivate = addSiteDTO.IsPrivate;
     }
 
-    /*
-    public Site(UpdateSiteDTO updateSiteDTO)
-    {
-        ID = updateSiteDTO.ID;
-        Name = updateSiteDTO.Name;
-        Lat = updateSiteDTO.Lat;
-        Lon = updateSiteDTO.Lon;
-        Alt = updateSiteDTO.Alt;
-        Adresse = updateSiteDTO.Adresse;
-        IsPublic = updateSiteDTO.IsPublic;
-        RoomCount = updateSiteDTO.RoomCount;
-    }
-
-
-    public Site(ShowSiteDTO showSiteDTO)
-    {
-        ID = showSiteDTO.ID;
-        Name = showSiteDTO.Name;
-        Lat = showSiteDTO.Lat;
-        Lon = showSiteDTO.Lon;
-        Alt = showSiteDTO.Alt;
-        Adresse = showSiteDTO.Adresse;
-        IsPublic = showSiteDTO.IsPublic;
-        RoomCount = showSiteDTO.RoomCount;
-    }
-
-    public void UpdateSite(UpdateSiteDTO updateSite)
+    public void Update(EditSiteDTO updateSite)
     {
 
         Name = updateSite.Name;
         Lat = updateSite.Lat;
         Lon = updateSite.Lon;
         Alt = updateSite.Alt;
-        Adresse = updateSite.Adresse;
-        IsPublic = updateSite.IsPublic;
-        RoomCount = updateSite.RoomCount;   
-    } */
+        Address = updateSite.Address;
+        IsPrivate = updateSite.IsPrivate;
+    }
 }

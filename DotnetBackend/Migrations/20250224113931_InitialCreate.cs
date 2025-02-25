@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DotnetBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitiatCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,10 +24,9 @@ namespace DotnetBackend.Migrations
                     Lat = table.Column<double>(type: "double", nullable: false),
                     Lon = table.Column<double>(type: "double", nullable: false),
                     Alt = table.Column<double>(type: "double", nullable: false),
-                    Adresse = table.Column<string>(type: "longtext", nullable: false)
+                    Address = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RoomCount = table.Column<int>(type: "int", nullable: false)
+                    IsPrivate = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {

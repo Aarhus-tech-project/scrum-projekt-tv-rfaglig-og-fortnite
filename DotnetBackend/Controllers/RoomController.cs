@@ -10,7 +10,7 @@ using MySql.Data.MySqlClient;
 namespace DotnetBackend.Controllers;
 
 [Route("api")]
-public class ClassroomController(ClassroomRepository classroomRepository, ApiKeyService apiKeyService) : Controller
+public class RoomController(RoomRepository classroomRepository, ApiKeyService apiKeyService) : Controller
 {
     [HttpGet("SearchClassrooms")]
     public async Task<IActionResult> SearchClassrooms(string keyword = "", int limit = 10)
@@ -22,7 +22,7 @@ public class ClassroomController(ClassroomRepository classroomRepository, ApiKey
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
             
-            return Ok(classrooms.Select(c => new AddRoomDTO(c)));
+            return Ok(classrooms);
         }
         catch (Exception)
         {
@@ -40,7 +40,7 @@ public class ClassroomController(ClassroomRepository classroomRepository, ApiKey
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
 
-            return Ok(classrooms.Select(c => new AddRoomDTO(c)));
+            return Ok(classrooms);
         }
         catch (Exception)
         {
@@ -48,6 +48,7 @@ public class ClassroomController(ClassroomRepository classroomRepository, ApiKey
         }
     }
 
+    /*
     [HttpPost("AddClassrooms")]
     public async Task<IActionResult> AddClassroom([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody] AddRoomDTO addRoomDTO, Guid siteID)
     {
@@ -65,4 +66,5 @@ public class ClassroomController(ClassroomRepository classroomRepository, ApiKey
             return StatusCode(500);
         }
     }
+    */
 }

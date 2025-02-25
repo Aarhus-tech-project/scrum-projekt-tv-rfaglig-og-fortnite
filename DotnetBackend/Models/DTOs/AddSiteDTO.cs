@@ -10,7 +10,7 @@ public class AddSiteDTO
     public double Lon { get; set; }
     public double Alt { get; set; }
     public string Address { get; set; } = string.Empty;
-    public bool IsPublic { get; set; } = true;
+    public bool IsPrivate { get; set; } = false;
 
     public List<AddRoomDTO> Rooms { get; set; } = new();
     public List<AddEditUserSiteDTO> Users { get; set; } = new();

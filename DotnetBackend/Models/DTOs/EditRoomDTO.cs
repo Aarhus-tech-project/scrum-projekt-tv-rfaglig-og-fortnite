@@ -5,7 +5,7 @@ namespace DotnetBackend.Models.DTOs;
 
 public class EditRoomDTO
 {
-    public Guid Id { get; set; }
+    public Guid ID { get; set; }
     public string Name { get; set; } = string.Empty;
     public double Lat { get; set; } = 0.0;
     public double Lon { get; set; } = 0.0;
@@ -14,13 +14,13 @@ public class EditRoomDTO
 
     public EditRoomDTO() { }
 
-    public EditRoomDTO(Guid id, string name, double lat, double lon, double alt, int level)
+    public EditRoomDTO(Room room)
     {
-        Id = id;
-        Name = name;
-        Lat = lat;
-        Lon = lon;
-        Alt = alt;
-        Level = level;
+        ID = room.ID;
+        Name = room.Name;
+        Lat = room.Lat;
+        Lon = room.Lon;
+        Alt = room.Alt;
+        Level = room.Level;
     }
 }

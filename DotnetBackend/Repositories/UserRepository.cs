@@ -26,17 +26,12 @@ public class UserRepository(MySQLContext context)
         return user;
     }
 
-
-    public async Task<User> DeleteUserByEmail(string email)
+    public async Task<List<AddEditUserSiteDTO>> GetAddEditUserSiteFromSite(Guid siteID)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        if (user == null)
+        return await context.UserSites.Where(us => us.SiteID == siteID).Select(us => new AddEditUserSiteDTO()
         {
-            return null;
-        }
-
-        context.Users.Remove(user);
-        await context.SaveChangesAsync();
-        return user;
+            Email = context.Users.FirstOrDefault(u => u.ID == us.UserID)!.Name,
+            Role = us.Role 
+        }).ToListAsync();
     }
 }

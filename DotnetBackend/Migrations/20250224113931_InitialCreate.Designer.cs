@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotnetBackend.Migrations
 {
     [DbContext(typeof(MySQLContext))]
-    [Migration("20250218123641_InitiatCreate")]
-    partial class InitiatCreate
+    [Migration("20250224113931_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,14 +67,14 @@ namespace DotnetBackend.Migrations
                         .HasColumnType("BINARY(16)")
                         .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
 
-                    b.Property<string>("Adresse")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<double>("Alt")
                         .HasColumnType("double");
 
-                    b.Property<bool>("IsPublic")
+                    b.Property<bool>("IsPrivate")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<double>("Lat")
@@ -87,9 +87,6 @@ namespace DotnetBackend.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
-
-                    b.Property<int>("RoomCount")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
