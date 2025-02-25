@@ -8,27 +8,40 @@ namespace DotnetBackend.Repositories;
 
 public class SiteRepository(MySQLContext context)
 {
-    public async Task<List<SiteDTO>> GetUserSites(string Email)
+    public async Task<List<ShowSiteDTO>> GetUserSites(string Email)
     {
         return await context.UserSites
             .Where(us => us.User.Email == Email)
             .Select(us => us.Site)
-            .Select(site => new SiteDTO(site)
+            .Select(site => new ShowSiteDTO(site)
             {
                 RoomCount = context.Rooms.Count(r => r.SiteID == site.ID)
             })
             .ToListAsync();
     }
 
-    public async Task AddSiteAsync(string Email, Site site)
+ public async Task AddSiteAsync(Site site)
     {
-        
         context.Sites.Add(site);
         int rowsAffected = await context.SaveChangesAsync();
 
         if (rowsAffected <= 0)
             throw new Exception("Failed to add classroom");
+    }   
+
+    public async Task UpdateSiteAsync(UpdateSiteDTO updateSite)
+    {
+        var currentSite = await context.Sites.FindAsync(updateSite.ID);
+        if (currentSite == null)
+            throw new KeyNotFoundException("Site not found");
+
+        currentSite.UpdateSite(updateSite);
+
+        int rowsAffected = await context.SaveChangesAsync();
+        if (rowsAffected <= 0)
+            throw new Exception("Failed to update site");
     }
+
     
     public async Task AddUserToSiteAsync(string Email, Site site, UserRole Role)
     {
@@ -37,6 +50,7 @@ public class SiteRepository(MySQLContext context)
         if (user == null) {throw new Exception("User not found");}
 
         UserSite newSite = new UserSite(user.ID, site.ID, Role);
+        newSite.Site = site;
         context.UserSites.Add(newSite);
 
         int rowsAffected = await context.SaveChangesAsync();
@@ -63,4 +77,26 @@ public class SiteRepository(MySQLContext context)
         .ToListAsync();
     }
 
+    public async Task DeleteSiteAsync(string Email, Guid guid)
+    {
+        Site site = await context.Sites.FirstOrDefaultAsync(site => site.ID == guid);
+
+
+        if (site == null)
+            throw new Exception("Site not found");
+            
+        var rooms = await context.Rooms.Where(r => r.SiteID == guid).ToListAsync();
+        var userSites = await context.UserSites.Where(u => u.SiteID == guid).ToListAsync();
+        
+        context.Rooms.RemoveRange(rooms);
+
+        context.UserSites.RemoveRange(userSites);
+
+        context.Sites.Remove(site);
+
+        int rowsAffected = await context.SaveChangesAsync();
+
+        if (rowsAffected <= 0)
+            throw new Exception("Failed to delete site");
+    }
 }

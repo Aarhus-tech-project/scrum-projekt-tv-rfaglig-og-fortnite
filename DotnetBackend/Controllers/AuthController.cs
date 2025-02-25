@@ -15,8 +15,6 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
     {
         try
         {
-
-
             if (!EmailService.IsValidEmail(registerUser.Email))
                 return BadRequest("Invalid Email");
 
@@ -52,7 +50,7 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
 
             loginRequest.Dispose();
 
-            string apiKey = apiKeyService.GenerateApiKey(new PublicUserDTO(attemptedUser), TimeSpan.FromDays(30));
+            string apiKey = apiKeyService.GenerateApiKey(attemptedUser.Email, TimeSpan.FromDays(30));
             return Ok(apiKey);
         }
         catch (Exception ex)

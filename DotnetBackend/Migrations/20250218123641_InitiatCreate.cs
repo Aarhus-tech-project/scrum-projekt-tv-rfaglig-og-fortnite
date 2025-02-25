@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DotnetBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitiatCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +18,7 @@ namespace DotnetBackend.Migrations
                 name: "Sites",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID = table.Column<byte[]>(type: "BINARY(16)", nullable: false, defaultValueSql: "(UUID_TO_BIN(UUID()))"),
                     Name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Lat = table.Column<double>(type: "double", nullable: false),
@@ -28,7 +26,8 @@ namespace DotnetBackend.Migrations
                     Alt = table.Column<double>(type: "double", nullable: false),
                     Adresse = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    RoomCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,8 +39,7 @@ namespace DotnetBackend.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID = table.Column<byte[]>(type: "BINARY(16)", nullable: false, defaultValueSql: "(UUID_TO_BIN(UUID()))"),
                     Name = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
@@ -60,15 +58,14 @@ namespace DotnetBackend.Migrations
                 name: "Rooms",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ID = table.Column<byte[]>(type: "BINARY(16)", nullable: false, defaultValueSql: "(UUID_TO_BIN(UUID()))"),
                     Name = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Lat = table.Column<double>(type: "double", nullable: false),
                     Lon = table.Column<double>(type: "double", nullable: false),
                     Alt = table.Column<double>(type: "double", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
-                    SiteID = table.Column<int>(type: "int", nullable: false)
+                    SiteID = table.Column<byte[]>(type: "BINARY(16)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,8 +83,8 @@ namespace DotnetBackend.Migrations
                 name: "UserSites",
                 columns: table => new
                 {
-                    SiteID = table.Column<int>(type: "int", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false),
+                    SiteID = table.Column<byte[]>(type: "BINARY(16)", nullable: false),
+                    UserID = table.Column<byte[]>(type: "BINARY(16)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

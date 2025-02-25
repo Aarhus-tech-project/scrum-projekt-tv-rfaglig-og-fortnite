@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotnetBackend.Migrations
 {
     [DbContext(typeof(MySQLContext))]
-    [Migration("20250214120326_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250218123641_InitiatCreate")]
+    partial class InitiatCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,10 @@ namespace DotnetBackend.Migrations
 
             modelBuilder.Entity("DotnetBackend.Models.Entities.Room", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<byte[]>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+                        .HasColumnType("BINARY(16)")
+                        .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
 
                     b.Property<double>("Alt")
                         .HasColumnType("double");
@@ -50,8 +49,9 @@ namespace DotnetBackend.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<int>("SiteID")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("SiteID")
+                        .IsRequired()
+                        .HasColumnType("BINARY(16)");
 
                     b.HasKey("ID");
 
@@ -62,11 +62,10 @@ namespace DotnetBackend.Migrations
 
             modelBuilder.Entity("DotnetBackend.Models.Entities.Site", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<byte[]>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+                        .HasColumnType("BINARY(16)")
+                        .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
 
                     b.Property<string>("Adresse")
                         .IsRequired()
@@ -89,6 +88,9 @@ namespace DotnetBackend.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<int>("RoomCount")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.ToTable("Sites");
@@ -96,11 +98,10 @@ namespace DotnetBackend.Migrations
 
             modelBuilder.Entity("DotnetBackend.Models.Entities.User", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<byte[]>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+                        .HasColumnType("BINARY(16)")
+                        .HasDefaultValueSql("(UUID_TO_BIN(UUID()))");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -127,11 +128,11 @@ namespace DotnetBackend.Migrations
 
             modelBuilder.Entity("DotnetBackend.Models.Entities.UserSite", b =>
                 {
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("UserID")
+                        .HasColumnType("BINARY(16)");
 
-                    b.Property<int>("SiteID")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("SiteID")
+                        .HasColumnType("BINARY(16)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
@@ -146,7 +147,7 @@ namespace DotnetBackend.Migrations
             modelBuilder.Entity("DotnetBackend.Models.Entities.Room", b =>
                 {
                     b.HasOne("DotnetBackend.Models.Entities.Site", "Site")
-                        .WithMany("Rooms")
+                        .WithMany()
                         .HasForeignKey("SiteID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -171,11 +172,6 @@ namespace DotnetBackend.Migrations
                     b.Navigation("Site");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DotnetBackend.Models.Entities.Site", b =>
-                {
-                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }
