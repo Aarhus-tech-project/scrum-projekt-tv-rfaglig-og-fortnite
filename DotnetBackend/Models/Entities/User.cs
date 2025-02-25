@@ -8,7 +8,6 @@ namespace DotnetBackend.Models.Entities;
 public class User
 {
     [Key]
-    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ID { get; set; }
 
     [Required]
@@ -28,7 +27,6 @@ public class User
 
     public User(){}
 
-    /*
     public User(RegisterUserDTO registerUserDTO)
     {
         ID = Guid.NewGuid();
@@ -38,5 +36,4 @@ public class User
 
         CreatedAt = DateTime.Now;
     }
-    */
 }

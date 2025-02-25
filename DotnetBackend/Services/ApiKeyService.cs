@@ -44,6 +44,7 @@ public class ApiKeyService
         if (tokenData.GetProperty("exp").GetInt64()<DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             return false;
 
+        user.ID = Guid.Parse(tokenData.GetProperty("sub").GetProperty("ID").GetString()!);
         user.Name = tokenData.GetProperty("sub").GetProperty("Name").GetString()!;
         user.Email = tokenData.GetProperty("sub").GetProperty("Email").GetString()!;
         user.CreatedAt = tokenData.GetProperty("sub").GetProperty("CreatedAt").GetDateTime()!;

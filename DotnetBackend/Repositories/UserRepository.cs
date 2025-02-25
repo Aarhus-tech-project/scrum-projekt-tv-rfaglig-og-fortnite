@@ -25,4 +25,13 @@ public class UserRepository(MySQLContext context)
         await context.SaveChangesAsync();
         return user;
     }
+
+    public async Task<List<AddEditUserSiteDTO>> GetAddEditUserSiteFromSite(Guid siteID)
+    {
+        return await context.UserSites.Where(us => us.SiteID == siteID).Select(us => new AddEditUserSiteDTO()
+        {
+            Email = context.Users.FirstOrDefault(u => u.ID == us.UserID)!.Name,
+            Role = us.Role 
+        }).ToListAsync();
+    }
 }
