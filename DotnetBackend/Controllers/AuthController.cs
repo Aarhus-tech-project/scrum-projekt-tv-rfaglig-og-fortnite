@@ -50,7 +50,7 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
 
             loginRequest.Dispose();
 
-            string apiKey = apiKeyService.GenerateApiKey(attemptedUser.Email, TimeSpan.FromDays(30));
+            string apiKey = apiKeyService.GenerateApiKey(new PublicUserDTO(attemptedUser), TimeSpan.FromDays(30));
             return Ok(apiKey);
         }
         catch (Exception ex)
@@ -59,6 +59,7 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
         }
     }
 
+    /*
     [HttpDelete("DeleteAccount")]
     public async Task<IActionResult> DeleteAccount([FromHeader(Name = "X-Api-Key")] string apikey)
     {
@@ -88,5 +89,6 @@ public class AuthController(UserRepository userRepository, ApiKeyService apiKeyS
             return StatusCode(500);
         }
     }
+    */
 
 }
