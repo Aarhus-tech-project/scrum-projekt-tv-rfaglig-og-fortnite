@@ -11,12 +11,12 @@ class ApiService {
   static VoidCallback? onLogout;
 
   static const String prodBaseUrl = 'https://.com/api';
-  
+
   // Detect platform and set base URL accordingly
   static final String baseUrl = getBaseUrl();
 
   static String? ApiKey;
-  
+
   static void setLogoutHandler(VoidCallback logoutFunction) {
     onLogout = logoutFunction;
   }
@@ -32,14 +32,11 @@ class ApiService {
   }
 
   static Future<http.Response> sendRequest(
-      String endpoint, {
-      String method = 'GET',
-      Map<String, String>? body,
-      bool requiresAuth = false,
-    }) async {
-
-    ApiKey ??= await ApiKeyStorageService.getApiToken();
-
+    String endpoint, {
+    String method = 'GET',
+    Map<String, String>? body,
+    bool requiresAuth = false,
+  }) async {
     final url = Uri.parse('$baseUrl/$endpoint');
     final headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -49,7 +46,8 @@ class ApiService {
     try {
       http.Response response;
       if (method == 'POST') {
-        response = await http.post(url, headers: headers, body: jsonEncode(body));
+        response =
+            await http.post(url, headers: headers, body: jsonEncode(body));
       } else if (method == 'GET') {
         response = await http.get(url, headers: headers);
       } else {
@@ -74,8 +72,32 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteUser(String apiKey) async {
+    final url = Uri.parse('$baseUrl/auth/DeleteUser');
+    final headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-Api-Key': apiKey,
+    };
+
+    try {
+      final response = await http.delete(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        print('User deleted successfully');
+        ApiKeyStorageService.deleteApiToken();
+      } else {
+        print('Failed to delete user: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('HTTP Error: $e');
+      throw Exception('Request failed: $e');
+    }
+  }
+
   /// Registers a new user
-  static Future<void> register(String name, String email, String password) async {
+  static Future<void> register(
+      String name, String email, String password) async {
     final response = await sendRequest(
       'auth/Register',
       method: 'POST',
@@ -100,14 +122,18 @@ class ApiService {
       },
     );
 
-    if (Apikeyservice.validateApiKey(response.body)) {
-      ApiKey = response.body;
-      ApiKeyStorageService.saveApiToken(ApiKey!);
-    }   
+    await ApiKeyStorageService.saveApiToken(response.body);
+    ApiKey = response.body;
   }
 
   /// Fetches classrooms with optional keyword and limit
-  static Future<List<Room>> searchClassrooms({String keyword = '', int limit = 5}) async {
+  static Future<List<Room>> searchClassrooms(
+      {String keyword = '', int limit = 5}) async {
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
       'searchclassrooms?keyword=$keyword&limit=$limit',
       requiresAuth: true,
@@ -117,14 +143,25 @@ class ApiService {
   }
 
   static Future<List<Site>> getUserSites() async {
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
-      'GetUserSites', 
+      'GetUserSites',
     );
     final List<dynamic> data = json.decode(response.body);
     return data.map((json) => Site.fromJson(json)).toList();
   }
 
-  static Future<List<Site>> getNearbySites({double lat = 0, double lon = 0}) async {
+  static Future<List<Site>> getNearbySites(
+      {double lat = 0, double lon = 0}) async {
+    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
+    //   onLogout?.call();
+    //   throw Exception('Invalid API key');
+    // }
+
     final response = await sendRequest(
       'GetNearbySites?lat=$lat&lon=$lon',
     );

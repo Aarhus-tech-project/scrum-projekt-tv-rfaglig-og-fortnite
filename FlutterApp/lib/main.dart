@@ -1,15 +1,31 @@
 import 'package:classroom_finder_app/LoginRegisterPage.dart';
+import 'package:classroom_finder_app/ProfilePage.dart';
 import 'package:classroom_finder_app/SearchClassroomsPage.dart';
+import 'package:classroom_finder_app/Services/ApiKeyService.dart';
+import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:classroom_finder_app/SitesPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: LoginRegisterPage(),
-  ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) async {
+    String? apiKey = await ApiKeyStorageService.getApiToken();
+    if (!Apikeyservice.validateApiKey(apiKey)['isValid'] == true) {
+      runApp(MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MainPage(),
+      ));
+    } else {
+      ApiKeyStorageService.deleteApiToken();
+      runApp(MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginRegisterPage(),
+      ));
+    }
+  });
 }
 
 class MainPage extends StatefulWidget {
@@ -23,13 +39,12 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     SitesPage(),
     SearchClassroomsPage(),
-    ProfileScreen(),
+    ProfilePage(),
   ];
 
   @override
   void initState() {
     super.initState();
-
     ApiService.setLogoutHandler(() {
       print("Logging out...");
       Navigator.pushReplacement(
@@ -70,12 +85,5 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Profile Page', style: TextStyle(fontSize: 24)));
   }
 }

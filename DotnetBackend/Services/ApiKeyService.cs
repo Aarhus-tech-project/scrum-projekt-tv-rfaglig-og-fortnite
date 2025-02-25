@@ -6,12 +6,12 @@ public class ApiKeyService
 {
     private readonly string secretKey = "Datait2025!";
 
-    public string GenerateApiKey(string clientName, TimeSpan validity)
+    public string GenerateApiKey(PublicUserDTO user, TimeSpan validity)
     {
         var payload = new
         {
             kid = Guid.NewGuid().ToString(),
-            sub = clientName,
+            sub = user,
             exp = DateTimeOffset.UtcNow.Add(validity).ToUnixTimeSeconds()
         };
 
@@ -22,9 +22,9 @@ public class ApiKeyService
         return $"{base64Payload}.{signature}";
     }
 
-    public bool ValidateApiKey(string apiKey, out string? clientName)
+    public bool ValidateApiKey(string apiKey, out PublicUserDTO? user)
     {
-        clientName = null;
+        user = null;
         if (string.IsNullOrEmpty(apiKey) || !apiKey.Contains('.'))
             return false;
 
@@ -41,10 +41,12 @@ public class ApiKeyService
 
         // Deserialize and check expiration
         var tokenData = JsonSerializer.Deserialize<JsonElement>(payload);
-        if (tokenData.GetProperty("exp").GetInt64()<DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (tokenData.GetProperty("exp").GetInt64() < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             return false;
 
-        clientName = tokenData.GetProperty("sub").GetString()!;
+        user!.Name = tokenData.GetProperty("sub").GetProperty("name").GetString()!;
+        user!.Email = tokenData.GetProperty("sub").GetProperty("email").GetString()!;
+        user!.CreatedAt = tokenData.GetProperty("sub").GetProperty("createdAt").GetDateTime()!;
         return true;
     }
 
@@ -54,4 +56,6 @@ public class ApiKeyService
         byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
         return Convert.ToBase64String(hash);
     }
+
+
 }
