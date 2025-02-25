@@ -27,7 +27,8 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
   }
 
   updateSearchClassrooms(String keyword) async {
-    List<Room> newClassrooms = await ApiService.searchClassrooms(keyword: keyword);
+    List<Room> newClassrooms =
+        await ApiService.searchClassrooms(keyword: keyword);
     setState(() {
       rooms = newClassrooms;
     });
@@ -50,8 +51,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                     decoration: InputDecoration(
                       hintText: 'Search Rooms',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                     style: TextStyle(fontSize: 20),
                   ),
@@ -79,29 +79,26 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
         height: 60,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[300],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            )
-          ),
+              backgroundColor: Colors.grey[300],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              )),
           onPressed: () {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, animation,
-                        secondaryAnimation) =>
+                pageBuilder: (context, animation, secondaryAnimation) =>
                     ClassroomCompassPage(room: rooms[index]),
-                transitionsBuilder: (context, animation,
-                    secondaryAnimation, child) {
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
                   const begin = Offset(1.0, 0.0);
                   const end = Offset.zero;
                   const curve = Curves.easeInOut;
-        
+
                   var tween = Tween(begin: begin, end: end)
                       .chain(CurveTween(curve: curve));
-                  var offsetAnimation =
-                      animation.drive(tween);
-        
+                  var offsetAnimation = animation.drive(tween);
+
                   return SlideTransition(
                     position: offsetAnimation,
                     child: child,

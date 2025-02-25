@@ -13,7 +13,7 @@ namespace DotnetBackend.Controllers;
 public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyService) : Controller
 {
     [HttpGet("GetUserSites")]
-    public async Task<IActionResult> GetSites ([FromHeader(Name = "X-Api-Key")] string apiKey)
+    public async Task<IActionResult> GetSites([FromHeader(Name = "X-Api-Key")] string apiKey)
     {
         if (!apiKeyService.ValidateApiKey(apiKey, out var user)) 
             return Unauthorized("Unauthorized");

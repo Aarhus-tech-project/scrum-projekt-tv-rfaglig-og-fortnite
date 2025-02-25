@@ -41,7 +41,7 @@ public class ApiKeyService
 
         // Deserialize and check expiration
         var tokenData = JsonSerializer.Deserialize<JsonElement>(payload);
-        if (tokenData.GetProperty("exp").GetInt64()<DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (tokenData.GetProperty("exp").GetInt64() < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             return false;
 
         user.ID = Guid.Parse(tokenData.GetProperty("sub").GetProperty("ID").GetString()!);
@@ -57,4 +57,6 @@ public class ApiKeyService
         byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
         return Convert.ToBase64String(hash);
     }
+
+
 }

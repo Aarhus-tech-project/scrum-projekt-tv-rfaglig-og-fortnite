@@ -15,7 +15,7 @@ public class UserRepository(MySQLContext context)
 
     public async Task<User> GetUserFromEmail(string email)
     {
-        return await context.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw(new KeyNotFoundException());
+        return await context.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw (new KeyNotFoundException());
     }
 
     public async Task<User> RegisterUser(RegisterUserDTO registerUser)

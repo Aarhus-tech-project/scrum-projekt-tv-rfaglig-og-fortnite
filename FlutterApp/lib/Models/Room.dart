@@ -8,14 +8,13 @@ class Room {
   int level;
   String siteName;
 
-  Room({
-    required this.name,
-    required this.latitude,
-    required this.longitude,
-    required this.altitude,
-    required this.level,
-    required this.siteName
-  });
+  Room(
+      {required this.name,
+      required this.latitude,
+      required this.longitude,
+      required this.altitude,
+      required this.level,
+      required this.siteName});
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(

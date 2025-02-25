@@ -34,42 +34,50 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Container(
-            color: Colors.grey[300],
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-                  child: LoginRegisterToggle(),
-                ),
-                InputFields(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
-                  child: loginToggle ? 
-                    AuthButton(text: "Login", onPressed: () async {
-                      try {
-                        await ApiService.login(emailController.text, passwordController.text);
-                        showSnackBar("Login Successful!", Colors.green);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
-                      } catch (e) {
-                        showSnackBar(e.toString(), Colors.red);
-                      }
-                      
-                    })
-                    : 
-                    AuthButton(text: "Register", onPressed: () async {
-                      try {
-                        await ApiService.register(nameController.text, emailController.text, passwordController.text);
-                        showSnackBar("Registration Successful!", Colors.green);
-                      } catch (e) {
-                        showSnackBar(e.toString(), Colors.red);
-                      }
-                    }),
-                ),
-              ],
-            ),
+        child: Container(
+          color: Colors.grey[300],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+                child: LoginRegisterToggle(),
+              ),
+              InputFields(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
+                child: loginToggle
+                    ? AuthButton(
+                        text: "Login",
+                        onPressed: () async {
+                          try {
+                            await ApiService.login(
+                                emailController.text, passwordController.text);
+                            showSnackBar("Login Successful!", Colors.green);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MainPage()));
+                          } catch (e) {
+                            showSnackBar(e.toString(), Colors.red);
+                          }
+                        })
+                    : AuthButton(
+                        text: "Register",
+                        onPressed: () async {
+                          try {
+                            await ApiService.register(nameController.text,
+                                emailController.text, passwordController.text);
+                            showSnackBar(
+                                "Registration Successful!", Colors.green);
+                          } catch (e) {
+                            showSnackBar(e.toString(), Colors.red);
+                          }
+                        }),
+              ),
+            ],
           ),
+        ),
       ),
     );
   }
@@ -178,10 +186,9 @@ class AuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 20.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
+          backgroundColor: const Color.fromARGB(255, 33, 150, 243),
           foregroundColor: Colors.white,
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
           shape: RoundedRectangleBorder(
