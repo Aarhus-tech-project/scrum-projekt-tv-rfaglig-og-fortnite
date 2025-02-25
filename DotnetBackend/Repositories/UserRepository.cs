@@ -34,4 +34,19 @@ public class UserRepository(MySQLContext context)
             Role = us.Role 
         }).ToListAsync();
     }
+
+    public async Task DeleteUser(Guid guid)
+    {
+        User user = await context.Users.FirstOrDefaultAsync(user => user.ID == guid) ?? throw new Exception("User not found");
+        var userSites = await context.UserSites.Where(u => u.UserID == guid).ToListAsync();
+        
+        context.UserSites.RemoveRange(userSites);
+
+        context.Users.Remove(user);
+
+        int rowsAffected = await context.SaveChangesAsync();
+
+        if (rowsAffected <= 0)
+            throw new Exception("Failed to delete User");
+    }
 }
