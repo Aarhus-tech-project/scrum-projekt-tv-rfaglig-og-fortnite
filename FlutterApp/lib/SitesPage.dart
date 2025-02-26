@@ -85,13 +85,11 @@ class _SitesPageState extends State<SitesPage> {
                               style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
                             IconButton(
-                              onPressed:() {
-                                // Check if i have access to edit.
-
+                              onPressed:() async {
                                 // Get the id of the site i want to edit.
 
                                 // Make a request to rest api to get the AddEditSiteDTO from the id
-                                AddEditSiteDTO site = AddEditSiteDTO();
+                                AddEditSiteDTO site = await ApiService.GetEditSite(mySites[index].id);
 
                                 // Navigate to the AddSitePage and pass the AddEditSiteDTO.
                                 Navigator.push(

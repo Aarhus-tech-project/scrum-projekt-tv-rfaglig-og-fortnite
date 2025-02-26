@@ -1,33 +1,70 @@
-import 'package:classroom_finder_app/AddSitePage.dart';
-import 'package:classroom_finder_app/LoginRegisterPage.dart';
-import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
-import 'package:classroom_finder_app/ProfilePage.dart';
-import 'package:classroom_finder_app/SearchClassroomsPage.dart';
-import 'package:classroom_finder_app/Services/ApiKeyService.dart';
-import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
-import 'package:classroom_finder_app/Services/Apiservices.dart';
-import 'package:classroom_finder_app/SitesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'LoginRegisterPage.dart';
+import 'SitesPage.dart';
+import 'ProfilePage.dart';
+import 'SearchClassroomsPage.dart';
+import 'Services/ApiKeyStorageService.dart';
+import 'Services/ApiKeyService.dart';
+import 'Services/ApiServices.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) async {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<bool> _isAuthenticated;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAuthenticated = checkAuth();
+  }
+
+  Future<bool> checkAuth() async {
     String? apiKey = await ApiKeyStorageService.getApiToken();
-    if (!Apikeyservice.validateApiKey(apiKey)['isValid'] == true) {
-      runApp(MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: MainPage(),
-      ));
+    bool isValid = Apikeyservice.validateApiKey(apiKey)['isValid'] == true;
+
+    if (!isValid) {
+      return true;
     } else {
-      ApiKeyStorageService.deleteApiToken();
-      runApp(MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: LoginRegisterPage(),
-      ));
+      await ApiKeyStorageService.deleteApiToken();
+      return false;
     }
-  });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => FutureBuilder<bool>(
+              future: _isAuthenticated,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Scaffold(body: Center(child: CircularProgressIndicator()));
+                } else if (snapshot.hasData && snapshot.data == true) {
+                  return MainPage();
+                } else {
+                  return LoginRegisterPage();
+                }
+              },
+            ),
+        '/main': (context) => MainPage(),
+        '/login': (context) => LoginRegisterPage(),
+      },
+    );
+  }
 }
 
 class MainPage extends StatefulWidget {
@@ -48,11 +85,9 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     ApiService.setLogoutHandler(() {
+      if (!mounted) return; // ✅ Prevent async navigation issue
       print("Logging out...");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginRegisterPage()),
-      );
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 

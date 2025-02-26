@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
 import 'package:classroom_finder_app/Services/ApiKeyService.dart';
@@ -37,6 +38,8 @@ class ApiService {
     Map<String, String>? body,
     bool requiresAuth = false,
   }) async {
+    ApiKey ??= await ApiKeyStorageService.getApiToken();
+
     final url = Uri.parse('$baseUrl/$endpoint');
     final headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -122,17 +125,12 @@ class ApiService {
       },
     );
 
-    await ApiKeyStorageService.saveApiToken(response.body);
     ApiKey = response.body;
+    await ApiKeyStorageService.saveApiToken(response.body);
   }
 
   /// Fetches classrooms with optional keyword and limit
-  static Future<List<Room>> searchClassrooms(
-      {String keyword = '', int limit = 5}) async {
-    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
-    //   onLogout?.call();
-    //   throw Exception('Invalid API key');
-    // }
+  static Future<List<Room>> searchClassrooms({String keyword = '', int limit = 5}) async {
 
     final response = await sendRequest(
       'searchclassrooms?keyword=$keyword&limit=$limit',
@@ -143,16 +141,20 @@ class ApiService {
   }
 
   static Future<List<Site>> getUserSites() async {
-    // if (!Apikeyservice.validateApiKey(ApiKey)['isValid']) {
-    //   onLogout?.call();
-    //   throw Exception('Invalid API key');
-    // }
 
     final response = await sendRequest(
       'GetUserSites',
     );
     final List<dynamic> data = json.decode(response.body);
     return data.map((json) => Site.fromJson(json)).toList();
+  }
+
+  static Future<AddEditSiteDTO> GetEditSite(String siteID) async {
+    final response = await sendRequest(
+      'GetEditSite?siteID=$siteID'
+    );
+    final Map<String, dynamic> data = json.decode(response.body);
+    return AddEditSiteDTO.fromJson(data);
   }
 
   static Future<List<Site>> getNearbySites(

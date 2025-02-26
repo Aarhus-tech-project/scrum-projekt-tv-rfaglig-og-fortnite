@@ -1,3 +1,4 @@
+import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:classroom_finder_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/ApiServices.dart';
@@ -51,13 +52,9 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                         text: "Login",
                         onPressed: () async {
                           try {
-                            await ApiService.login(
-                                emailController.text, passwordController.text);
+                            await ApiService.login(emailController.text, passwordController.text);
                             showSnackBar("Login Successful!", Colors.green);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MainPage()));
+                            Navigator.pushReplacementNamed(context, '/main');
                           } catch (e) {
                             showSnackBar(e.toString(), Colors.red);
                           }
@@ -66,10 +63,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                         text: "Register",
                         onPressed: () async {
                           try {
-                            await ApiService.register(nameController.text,
-                                emailController.text, passwordController.text);
-                            showSnackBar(
-                                "Registration Successful!", Colors.green);
+                            await ApiService.register(nameController.text, emailController.text, passwordController.text);
+                            showSnackBar("Registration Successful!", Colors.green);
                           } catch (e) {
                             showSnackBar(e.toString(), Colors.red);
                           }

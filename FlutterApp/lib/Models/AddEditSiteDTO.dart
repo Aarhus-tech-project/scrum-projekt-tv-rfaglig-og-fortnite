@@ -92,7 +92,7 @@ class AddEditUserSiteDTO {
 
   AddEditUserSiteDTO({
     this.email = "",
-    this.role = UserRole.normal,
+    this.role = UserRole.Normal,
   });
 
   Map<String, dynamic> toJson() {
@@ -111,6 +111,6 @@ class AddEditUserSiteDTO {
 }
 
 enum UserRole {
-  normal,
-  admin
+  Normal,
+  Admin
 }

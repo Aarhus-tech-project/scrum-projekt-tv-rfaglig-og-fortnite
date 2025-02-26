@@ -1,6 +1,7 @@
 import 'package:classroom_finder_app/Models/Room.dart';
 
 class Site {
+  String id;
   String name;
   double lat;
   double lon;
@@ -10,6 +11,7 @@ class Site {
   int roomCount;
 
   Site({
+    required this.id,
     required this.name,
     required this.lat,
     required this.lon,
@@ -21,6 +23,7 @@ class Site {
 
   factory Site.fromJson(Map<String, dynamic> json) {
     return Site(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       lat: (json['lat'] ?? 0).toDouble(),
       lon: (json['lon'] ?? 0).toDouble(),

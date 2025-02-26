@@ -29,7 +29,7 @@ public class Room
     public Guid SiteID { get; set; }
     public Site Site { get; set; }
 
-    public Room(AddRoomDTO addRoomDTO)
+    public Room(AddEditRoomDTO addRoomDTO)
     {
         ID = Guid.NewGuid();
         Name = addRoomDTO.Name;
@@ -39,9 +39,9 @@ public class Room
         Level = addRoomDTO.Level;
     }
 
-    public Room(EditRoomDTO editRoomDTO, Guid siteID) 
+    public Room(AddEditRoomDTO editRoomDTO, Guid siteID) 
     {
-        ID = editRoomDTO.ID == Guid.Empty ? Guid.NewGuid() : editRoomDTO.ID;
+        ID = Guid.NewGuid();
         Name = editRoomDTO.Name;
         Lat = editRoomDTO.Lat;
         Lon = editRoomDTO.Lon;
@@ -52,7 +52,7 @@ public class Room
 
     public Room() {}
 
-    public void Update(EditRoomDTO editRoomDTO)
+    public void Update(AddEditRoomDTO editRoomDTO)
     {
         Name = editRoomDTO.Name;
         Lat = editRoomDTO.Lat;

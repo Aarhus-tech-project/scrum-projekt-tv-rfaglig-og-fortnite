@@ -30,9 +30,25 @@ public class UserRepository(MySQLContext context)
     {
         return await context.UserSites.Where(us => us.SiteID == siteID).Select(us => new AddEditUserSiteDTO()
         {
-            Email = context.Users.FirstOrDefault(u => u.ID == us.UserID)!.Name,
+            Email = context.Users.FirstOrDefault(u => u.ID == us.UserID)!.Email,
             Role = us.Role 
         }).ToListAsync();
+    }
+
+    public async Task EditUserSiteForSiteAsync(Guid siteID, List<AddEditUserSiteDTO> users)
+    {
+        context.UserSites.RemoveRange(context.UserSites.Where(us => us.SiteID == siteID));
+
+        context.UserSites.AddRange(users.Select(ud => new UserSite(
+            siteID,
+            context.Users.FirstOrDefault(u => u.Email == ud.Email)!.ID,
+            ud.Role
+        ){
+            Site = context.Sites.FirstOrDefault(s => s.ID == siteID)!,
+            User = context.Users.FirstOrDefault(u => u.Email == ud.Email)!
+        }));
+
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteUser(Guid guid)

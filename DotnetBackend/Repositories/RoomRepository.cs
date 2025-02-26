@@ -22,40 +22,18 @@ public class RoomRepository(MySQLContext context)
             throw new Exception("Failed to add classroom");
     }
 
-    public async Task EditRoomsForSiteAsync(Guid siteID, List<EditRoomDTO> rooms)
+    public async Task EditRoomsForSiteAsync(Guid siteID, List<AddEditRoomDTO> rooms)
     {
-        var existingRoomIDs = await context.Rooms
-            .Where(r => r.SiteID == siteID)
-            .Select(r => r.ID)
-            .ToListAsync();
+        context.Rooms.RemoveRange(context.Rooms.Where(r => r.SiteID == siteID));
 
-        var newRoomIDs = rooms.Select(r => r.ID).ToList();
-
-        var roomsToDelete = existingRoomIDs.Except(newRoomIDs).ToList();
-        if(roomsToDelete.Count != 0)
-        {
-            context.Rooms.RemoveRange(context.Rooms.Where(r => roomsToDelete.Contains(r.ID)));
-        }
-
-        foreach (var room in rooms)
-        {
-            var existingRoom = await context.Rooms.FirstOrDefaultAsync(r => r.ID == room.ID);
-            if (existingRoom == null)
-            {
-                context.Rooms.Add(new Room(room, siteID));   
-            }
-            else
-            {
-                existingRoom.Update(room);
-            }
-        }
+        context.Rooms.AddRange(rooms.Select(r => new Room(r, siteID)));
 
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<EditRoomDTO>> GetEditRoomsFromSiteAsync(Guid siteID)
+    public async Task<List<AddEditRoomDTO>> GetEditRoomsFromSiteAsync(Guid siteID)
     {
-        return await context.Rooms.Where(r => r.SiteID == siteID).Select(r => new EditRoomDTO(r)).ToListAsync();
+        return await context.Rooms.Where(r => r.SiteID == siteID).Select(r => new AddEditRoomDTO(r)).ToListAsync();
     }
 
     public async Task<List<PublicRoomDTO>> SearchClassroomsAsync(string keyword, int limit = 10)

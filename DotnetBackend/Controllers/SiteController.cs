@@ -18,7 +18,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         if (!apiKeyService.ValidateApiKey(apiKey, out var user)) 
             return Unauthorized("Unauthorized");
 
-        var sites = await siteRepository.GetUserSites(user.Email);
+        var sites = await siteRepository.GetPublicUserSites(user.Email);
         return Ok(sites);
 
     }

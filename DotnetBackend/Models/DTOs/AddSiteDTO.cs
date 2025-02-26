@@ -12,6 +12,6 @@ public class AddSiteDTO
     public string Address { get; set; } = string.Empty;
     public bool IsPrivate { get; set; } = false;
 
-    public List<AddRoomDTO> Rooms { get; set; } = new();
+    public List<AddEditRoomDTO> Rooms { get; set; } = new();
     public List<AddEditUserSiteDTO> Users { get; set; } = new();
 }

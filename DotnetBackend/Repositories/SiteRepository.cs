@@ -8,7 +8,7 @@ namespace DotnetBackend.Repositories;
 
 public class SiteRepository(MySQLContext context, RoomRepository roomRepository, UserRepository userRepository)
 {
-    public async Task<List<PublicSiteDTO>> GetUserSites(string Email)
+    public async Task<List<PublicSiteDTO>> GetPublicUserSites(string Email)
     {
         return await context.UserSites
             .Where(us => us.User.Email == Email)
@@ -20,7 +20,7 @@ public class SiteRepository(MySQLContext context, RoomRepository roomRepository,
             .ToListAsync();
     }
 
- public async Task AddSiteAsync(Site site)
+    public async Task AddSiteAsync(Site site)
     {
         context.Sites.Add(site);
         int rowsAffected = await context.SaveChangesAsync();
@@ -35,11 +35,9 @@ public class SiteRepository(MySQLContext context, RoomRepository roomRepository,
 
         currentSite.Update(editSite);
         await roomRepository.EditRoomsForSiteAsync(editSite.ID, editSite.Rooms);
-        // Update UserSites
+        await userRepository.EditUserSiteForSiteAsync(editSite.ID, editSite.Users);
 
-        int rowsAffected = await context.SaveChangesAsync();
-        if (rowsAffected <= 0)
-            throw new Exception("Failed to update site");     
+        await context.SaveChangesAsync();
     }
 
     public async Task<EditSiteDTO> GetEditSiteAsync(Guid siteID)
