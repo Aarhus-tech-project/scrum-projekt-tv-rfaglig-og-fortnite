@@ -24,8 +24,6 @@ class _SitesPageState extends State<SitesPage> {
   updateSites() async {
     try {
       var newMySites = await ApiService.getUserSites();
-
-      Position position = await LocationUtils.getPreciseLocation();
       //var newNearbySites = await ApiService.getNearbySites(lat: position.latitude, lon: position.longitude);
       setState(() {
         mySites = newMySites;

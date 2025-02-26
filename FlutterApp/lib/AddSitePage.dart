@@ -1,3 +1,4 @@
+import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,6 +27,8 @@ class _AddsitepageState extends State<Addsitepage> {
     createNew = widget.site == null;
     if (createNew) {
       addEditSite = AddEditSiteDTO();
+      addEditSite.rooms = [];
+      addEditSite.users = [];
     }
     else {
       addEditSite = widget.site!;
@@ -65,7 +68,7 @@ class _AddsitepageState extends State<Addsitepage> {
 
               // Private Switch
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.lock, color: Colors.black54),
                   SizedBox(width: 6),
@@ -129,9 +132,15 @@ class _AddsitepageState extends State<Addsitepage> {
                     child: Text("Cancel", style: TextStyle(color: Colors.red)),
                   ),
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        addEditSite.name = nameController.text;
+                        addEditSite.address = addressController.text;
+                        addEditSite.isPrivate = isPrivate;
+
                         if (createNew) {
-                          // Call AddSite On API 
+                          await ApiService.AddSite(addEditSite);
+                        } else {
+                          await ApiService.EditSite(addEditSite);
                         }
 
                         Navigator.of(context).pop();

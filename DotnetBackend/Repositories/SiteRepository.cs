@@ -20,13 +20,18 @@ public class SiteRepository(MySQLContext context, RoomRepository roomRepository,
             .ToListAsync();
     }
 
-    public async Task AddSiteAsync(Site site)
+    public async Task AddSiteAsync(AddSiteDTO addSite)
     {
-        context.Sites.Add(site);
-        int rowsAffected = await context.SaveChangesAsync();
+        Site newSite = new Site(addSite);
+        context.Sites.Add(newSite);
 
-        if (rowsAffected <= 0)
-            throw new Exception("Failed to add classroom");
+        int rowsAffected = await context.SaveChangesAsync();
+        if (rowsAffected <= 0) throw new Exception("Failed to add Site");
+
+        roomRepository.AddRoomsForSiteAsync(newSite.ID, addSite.Rooms);
+        userRepository.AddUserSiteForSiteAsync(newSite.ID, addSite.Users);
+
+        await context.SaveChangesAsync();
     }   
 
     public async Task EditSiteAsync(EditSiteDTO editSite)
@@ -34,8 +39,8 @@ public class SiteRepository(MySQLContext context, RoomRepository roomRepository,
         var currentSite = await context.Sites.FindAsync(editSite.ID) ?? throw new KeyNotFoundException("Site not found");
 
         currentSite.Update(editSite);
-        await roomRepository.EditRoomsForSiteAsync(editSite.ID, editSite.Rooms);
-        await userRepository.EditUserSiteForSiteAsync(editSite.ID, editSite.Users);
+        roomRepository.EditRoomsForSiteAsync(editSite.ID, editSite.Rooms);
+        userRepository.EditUserSiteForSiteAsync(editSite.ID, editSite.Users);
 
         await context.SaveChangesAsync();
     }

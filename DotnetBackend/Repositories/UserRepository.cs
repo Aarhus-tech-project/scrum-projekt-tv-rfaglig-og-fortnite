@@ -35,7 +35,19 @@ public class UserRepository(MySQLContext context)
         }).ToListAsync();
     }
 
-    public async Task EditUserSiteForSiteAsync(Guid siteID, List<AddEditUserSiteDTO> users)
+    public void AddUserSiteForSiteAsync(Guid siteID, List<AddEditUserSiteDTO> users)
+    {
+        context.UserSites.AddRange(users.Select(ud => new UserSite(
+            siteID,
+            context.Users.FirstOrDefault(u => u.Email == ud.Email)!.ID,
+            ud.Role
+        ){
+            Site = context.Sites.FirstOrDefault(s => s.ID == siteID)!,
+            User = context.Users.FirstOrDefault(u => u.Email == ud.Email)!
+        }));
+    }
+
+    public void EditUserSiteForSiteAsync(Guid siteID, List<AddEditUserSiteDTO> users)
     {
         context.UserSites.RemoveRange(context.UserSites.Where(us => us.SiteID == siteID));
 
@@ -47,8 +59,6 @@ public class UserRepository(MySQLContext context)
             Site = context.Sites.FirstOrDefault(s => s.ID == siteID)!,
             User = context.Users.FirstOrDefault(u => u.Email == ud.Email)!
         }));
-
-        await context.SaveChangesAsync();
     }
 
     public async Task DeleteUser(Guid guid)

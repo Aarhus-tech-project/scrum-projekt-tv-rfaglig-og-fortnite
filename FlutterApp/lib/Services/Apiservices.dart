@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:classroom_finder_app/AddSitePage.dart';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
@@ -35,7 +36,7 @@ class ApiService {
   static Future<http.Response> sendRequest(
     String endpoint, {
     String method = 'GET',
-    Map<String, String>? body,
+    Map<String, dynamic>? body,
     bool requiresAuth = false,
   }) async {
     ApiKey ??= await ApiKeyStorageService.getApiToken();
@@ -49,8 +50,9 @@ class ApiService {
     try {
       http.Response response;
       if (method == 'POST') {
-        response =
-            await http.post(url, headers: headers, body: jsonEncode(body));
+        response = await http.post(url, headers: headers, body: jsonEncode(body));
+      } else if (method == 'PUT') {
+        response = await http.put(url, headers: headers, body: jsonEncode(body));
       } else if (method == 'GET') {
         response = await http.get(url, headers: headers);
       } else {
@@ -147,6 +149,22 @@ class ApiService {
     );
     final List<dynamic> data = json.decode(response.body);
     return data.map((json) => Site.fromJson(json)).toList();
+  }
+
+  static Future AddSite(AddEditSiteDTO site) async {
+    await sendRequest(
+      'Site',
+      method: 'POST',
+      body: site.toJson()
+    );
+  }
+
+  static Future EditSite(AddEditSiteDTO site) async {
+    await sendRequest(
+      'Site',
+      method: 'PUT',
+      body: site.toJson(),
+    );
   }
 
   static Future<AddEditSiteDTO> GetEditSite(String siteID) async {

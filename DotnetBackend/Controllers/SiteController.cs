@@ -31,9 +31,10 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
         try
         {            
-            var newSite = new Site(site);
-            await siteRepository.AddSiteAsync(newSite);
-            await siteRepository.AddUserToSiteAsync(user.Email, newSite, UserRole.Admin);
+            if (!site.Users.Contains(new AddEditUserSiteDTO(user.Email, UserRole.Admin))) 
+                site.Users.Add(new AddEditUserSiteDTO(user.Email, UserRole.Admin));
+                
+            await siteRepository.AddSiteAsync(site);
             return Ok();
         }
         catch (Exception ex)

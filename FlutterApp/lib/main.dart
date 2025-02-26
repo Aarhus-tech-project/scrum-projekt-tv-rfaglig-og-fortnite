@@ -34,12 +34,7 @@ class _MyAppState extends State<MyApp> {
     String? apiKey = await ApiKeyStorageService.getApiToken();
     bool isValid = Apikeyservice.validateApiKey(apiKey)['isValid'] == true;
 
-    if (!isValid) {
-      return true;
-    } else {
-      await ApiKeyStorageService.deleteApiToken();
-      return false;
-    }
+    return false;
   }
 
   @override

@@ -22,13 +22,16 @@ public class RoomRepository(MySQLContext context)
             throw new Exception("Failed to add classroom");
     }
 
-    public async Task EditRoomsForSiteAsync(Guid siteID, List<AddEditRoomDTO> rooms)
+    public void AddRoomsForSiteAsync(Guid siteID, List<AddEditRoomDTO> rooms)
+    {
+        context.Rooms.AddRange(rooms.Select(r => new Room(r, siteID)));
+    }
+
+    public void EditRoomsForSiteAsync(Guid siteID, List<AddEditRoomDTO> rooms)
     {
         context.Rooms.RemoveRange(context.Rooms.Where(r => r.SiteID == siteID));
 
         context.Rooms.AddRange(rooms.Select(r => new Room(r, siteID)));
-
-        await context.SaveChangesAsync();
     }
 
     public async Task<List<AddEditRoomDTO>> GetEditRoomsFromSiteAsync(Guid siteID)
