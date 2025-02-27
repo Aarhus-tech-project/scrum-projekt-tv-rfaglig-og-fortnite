@@ -1,12 +1,12 @@
 import 'package:classroom_finder_app/AddEditSitePage.dart';
-import 'package:classroom_finder_app/ClassroomCompassPage.dart';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 class SitesPage extends StatefulWidget {
+  const SitesPage({super.key});
+
   @override
   State<SitesPage> createState() => _SitesPageState();
 }
@@ -73,42 +73,93 @@ class _SitesPageState extends State<SitesPage> {
               ),
               Expanded(
                 child: GridView.builder(
+                  padding: EdgeInsets.all(10), // Adds padding around the grid
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
+                    childAspectRatio: 4 / 3, // Slightly more balanced aspect ratio
                   ),
                   itemCount: mySites.length,
                   itemBuilder: (context, index) {
+                    final site = mySites[index];
+
                     return Card(
-                        color: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Rounded edges
+                      elevation: 4, // Adds shadow for depth
+                      color: Colors.blueAccent,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Site Name
                             Text(
-                              mySites[index].name,
-                              style: TextStyle(color: Colors.white, fontSize: 20),
+                              site.name,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
+
+                            SizedBox(height: 4), // Spacing
+
+                            // Room Count
                             Text(
-                              '${mySites[index].roomCount.toString()} Room(s)',
-                              style: TextStyle(color: Colors.white, fontSize: 16),
+                              '${site.roomCount} Room(s)',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
                             ),
-                            IconButton(
-                              onPressed:() async {
-                                try {           
-                                  AddEditSiteDTO site = await ApiService.GetEditSite(mySites[index].id);
-                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Addsitepage(site: site)));
-                                  updateSites();
-                                } catch (e) {
-                                  showSnackBar(e.toString(), Colors.red);
-                                }
-                              }, 
-                              icon: Icon(Icons.edit)
-                            )
+
+                            Spacer(), // Pushes the menu button to the bottom
+
+                            // Popup Menu (More actions)
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: PopupMenuButton<String>(
+                                icon: Icon(Icons.more_vert, color: Colors.white), // Better icon
+                                color: Colors.white,
+                                onSelected: (value) async {
+                                  if (value == "Edit") {
+                                    try {
+                                      AddEditSiteDTO siteData = await ApiService.GetEditSite(site.id);
+                                      await Navigator.push(context, MaterialPageRoute(builder: (context) => Addsitepage(site: siteData),),);
+                                      updateSites();
+                                    } catch (e) {
+                                      showSnackBar(e.toString(), Colors.red);
+                                    }
+                                  } else if (value == "Delete") {
+                                    confirmDelete(context, site);
+                                  }
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: "Edit",
+                                    child: ListTile(
+                                      leading: Icon(Icons.edit, color: Colors.blue),
+                                      title: Text("Edit"),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: "Delete",
+                                    child: ListTile(
+                                      leading: Icon(Icons.delete, color: Colors.red),
+                                      title: Text("Delete"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      );
+                      ),
+                    );
                   },
                 ),
               ),
@@ -150,4 +201,34 @@ class _SitesPageState extends State<SitesPage> {
       ),
     );
   }
+
+  void confirmDelete(BuildContext context, Site site) async {
+  bool? confirm = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text("Delete Site"),
+      content: Text("Are you sure you want to delete ${site.name}?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false), // User pressed NO
+          child: Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true), // User pressed YES
+          child: Text("Delete", style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+
+  if (confirm == true) {
+    try {
+      await ApiService.DeleteSite(site.id);
+      showSnackBar("Successfully deleted ${site.name}", Colors.green);
+      updateSites(); 
+    } catch (e) {
+      showSnackBar("Failed to delete: ${e.toString()}", Colors.red);
+    }
+  }
+}
 }

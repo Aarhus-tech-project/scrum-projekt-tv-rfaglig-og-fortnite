@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
@@ -55,6 +54,8 @@ class ApiService {
         response = await http.put(url, headers: headers, body: jsonEncode(body));
       } else if (method == 'GET') {
         response = await http.get(url, headers: headers);
+      } else if (method == 'DELETE') {
+        response = await http.delete(url, headers: headers);
       } else {
         throw Exception('Unsupported HTTP method: $method');
       }
@@ -73,7 +74,7 @@ class ApiService {
     } else {
       print('Request failed with status: ${response.statusCode}');
       print('Response body: ${response.body}');
-      throw Exception('${response.body}');
+      throw Exception(response.body);
     }
   }
 
@@ -162,6 +163,13 @@ class ApiService {
       'Site',
       method: 'PUT',
       body: site.toJson(),
+    );
+  }
+
+  static Future DeleteSite(String siteID) async {
+    await sendRequest(
+      'Site?siteID=$siteID',
+      method: 'DELETE', 
     );
   }
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
@@ -7,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -101,6 +101,8 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }

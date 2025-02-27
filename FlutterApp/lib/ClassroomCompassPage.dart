@@ -1,7 +1,6 @@
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'dart:math' as math;
