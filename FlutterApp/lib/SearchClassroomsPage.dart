@@ -98,9 +98,9 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
 
     String distanceText;
     if (distance >= 1000) {
-      distanceText = "${(distance / 1000).toStringAsFixed(1)} km";
+      distanceText = "${(distance / 1000).toStringAsFixed(1)}km";
     } else {
-      distanceText = "${distance.toStringAsFixed(0)} m";
+      distanceText = "${distance.toStringAsFixed(0)}m";
     }
 
     return Padding(
