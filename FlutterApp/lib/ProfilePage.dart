@@ -106,15 +106,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  void deleteUser() async {
-    try {
-      String? apiKey = await ApiKeyStorageService.getApiToken();
-      ApiService.deleteUser(apiKey!);
-    } catch (e) {
-      print('error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,7 +191,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (confirmDelete != true) {
                   return;
                 }
-                deleteUser();
+                ApiService.deleteUser();
                 ApiService.onLogout?.call();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
