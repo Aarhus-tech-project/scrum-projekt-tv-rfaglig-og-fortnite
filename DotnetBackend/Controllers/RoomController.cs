@@ -31,18 +31,20 @@ public class RoomController(RoomRepository classroomRepository, ApiKeyService ap
     }
 
     [HttpGet("SearchNearbyClassrooms")]
-    public async Task<IActionResult> SearchNearbyClassrooms(double lat, double lon, double alt, string keyword = "", int limit = 10)
+    public async Task<IActionResult> SearchNearbyClassrooms([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword = "", int limit = 10)
     {
         try
         {
-            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(lat, lon, alt, keyword, limit);
+            if (!apiKeyService.ValidateApiKey(apiKey, out var user)) 
+                return Unauthorized("Unauthorized");
+            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(apiKey, user.ID, lat, lon, alt, keyword, limit);
 
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
 
             return Ok(classrooms);
         }
-        catch (Exception)
+        catch (Exception e)
         {
             return StatusCode(500);
         }
