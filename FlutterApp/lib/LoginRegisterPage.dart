@@ -34,43 +34,59 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          color: Colors.grey[300],
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-                child: LoginRegisterToggle(),
+      backgroundColor: Colors.grey[300],
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+                    child: LoginRegisterToggle(),
+                  ),
+                  SizedBox(height: 50.0),
+                  InputFields(),
+                  SizedBox(height: 70.0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 50.0),
+                    child: loginToggle
+                        ? AuthButton(
+                            text: "Login",
+                            onPressed: () async {
+                              try {
+                                await ApiService.login(emailController.text,
+                                    passwordController.text);
+                                showSnackBar("Login Successful!", Colors.green);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MainPage()));
+                              } catch (e) {
+                                showSnackBar(e.toString(), Colors.red);
+                              }
+                            })
+                        : AuthButton(
+                            text: "Register",
+                            onPressed: () async {
+                              try {
+                                await ApiService.register(
+                                    nameController.text,
+                                    emailController.text,
+                                    passwordController.text);
+                                showSnackBar(
+                                    "Registration Successful!", Colors.green);
+                              } catch (e) {
+                                showSnackBar(e.toString(), Colors.red);
+                              }
+                            }),
+                  ),
+                ],
               ),
-              InputFields(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 100.0),
-                child: loginToggle
-                    ? AuthButton(
-                        text: "Login",
-                        onPressed: () async {
-                          try {
-                            await ApiService.login(emailController.text, passwordController.text);
-                            showSnackBar("Login Successful!", Colors.green);
-                            Navigator.pushReplacementNamed(context, '/main');
-                          } catch (e) {
-                            showSnackBar(e.toString(), Colors.red);
-                          }
-                        })
-                    : AuthButton(
-                        text: "Register",
-                        onPressed: () async {
-                          try {
-                            await ApiService.register(nameController.text, emailController.text, passwordController.text);
-                            showSnackBar("Registration Successful!", Colors.green);
-                          } catch (e) {
-                            showSnackBar(e.toString(), Colors.red);
-                          }
-                        }),
-              ),
-            ],
+            ),
           ),
         ),
       ),

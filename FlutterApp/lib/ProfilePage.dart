@@ -21,15 +21,6 @@ class _ProfilePageState extends State<ProfilePage> {
     user();
   }
 
-  void deleteUser() async {
-    try {
-      String? apiKey = await ApiKeyStorageService.getApiToken();
-      ApiService.deleteUser(apiKey!);
-    } catch (e) {
-      print('error');
-    }
-  }
-
   void user() async {
     String? apiKey = await ApiKeyStorageService.getApiToken();
 
@@ -45,6 +36,26 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(Icons.settings, size: 40),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+              )
+            ],
+          )
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -76,39 +87,132 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(userName ?? 'Loading...'),
+                    Text(userName ?? 'Loading...',
+                        style: TextStyle(fontSize: 20)),
                   ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  ApiService.onLogout?.call();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 186, 31, 20), // Set the background color to red
-                ),
-                child: Text(
-                  'Log out',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  deleteUser();
-                  ApiService.onLogout?.call();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 186, 31, 20), // Set the background color to red
-                ),
-                child: Text(
-                  'Delete Account',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatefulWidget {
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  void deleteUser() async {
+    try {
+      String? apiKey = await ApiKeyStorageService.getApiToken();
+      ApiService.deleteUser(apiKey!);
+    } catch (e) {
+      print('error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                bool? confirmLogout = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Logout'),
+                      content: Text('Are you sure you want to Logout?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text('Yes'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirmLogout != true) {
+                  return;
+                }
+                ApiService.onLogout?.call();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.door_back_door, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text(
+                    'Log out',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                bool? confirmDelete = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Delete'),
+                      content:
+                          Text('Are you sure you want to delete your account?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirmDelete != true) {
+                  return;
+                }
+                deleteUser();
+                ApiService.onLogout?.call();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: Text(
+                'Delete Account',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+            )
+          ],
         ),
       ),
     );

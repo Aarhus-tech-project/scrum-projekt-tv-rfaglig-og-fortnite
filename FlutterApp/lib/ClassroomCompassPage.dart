@@ -1,8 +1,10 @@
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:compassx/compassx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -15,7 +17,7 @@ class ClassroomCompassPage extends StatefulWidget {
 }
 
 class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
-  double angleToTarget = 0.0; // Angle in degress offset from north to target
+  double angleToTarget = 0.0; // Angle in degrees offset from north to target
   double startLatitude = 0.0;
   double startLongitude = 0.0;
 
@@ -33,6 +35,44 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
     level = widget.room.level;
   }
 
+  double bearingFromStartToEnd(
+      double lat1Deg, double lon1Deg, double lat2Deg, double lon2Deg) {
+    double lat1 = degToRad(lat1Deg);
+    double lon1 = degToRad(lon1Deg);
+    double lat2 = degToRad(lat2Deg);
+    double lon2 = degToRad(lon2Deg);
+
+    double dLon = lon2 - lon1;
+
+    double y = math.sin(dLon) * math.cos(lat2);
+    double x = math.cos(lat1) * math.sin(lat2) -
+        math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+    double initialBearingRad = math.atan2(y, x);
+
+    double initialBearingDeg = radToDeg(initialBearingRad);
+
+    double bearing = (initialBearingDeg + 360) % 360;
+    return bearing;
+  }
+
+  double relativeAngleToTarget(double startLat, double startLon, double endLat,
+      double endLon, double deviceHeading) {
+    double bearingToTarget =
+        bearingFromStartToEnd(startLat, startLon, endLat, endLon);
+
+    double relativeAngle = (bearingToTarget - deviceHeading) % 360;
+    return relativeAngle;
+  }
+
+  double degToRad(double deg) {
+    return deg * (math.pi / 180.0);
+  }
+
+  double radToDeg(double rad) {
+    return rad * (180.0 / math.pi);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,15 +80,7 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(''),
-        actions: [
-          TextButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.map,
-                size: 40,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              )),
-        ],
+        actions: [],
       ),
       body: Column(
         children: [
@@ -87,21 +119,58 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
                       if (!snapshot.hasData) return const Text('No data');
                       final compass = snapshot.data!;
 
-                      double newHeading =
-                          (compass.heading + angleToTarget - 90) % 360;
-                      if (newHeading < 0) {
-                        newHeading += 360;
-                      }
-                      return Transform.rotate(
-                        angle: (-newHeading * 0.0174532925),
-                        child: Icon(
-                          Icons.arrow_upward_rounded,
-                          size: MediaQuery.of(context).size.width - 80,
-                        ),
+                      double newHeading = relativeAngleToTarget(
+                          startLatitude,
+                          startLongitude,
+                          targetLatitude,
+                          targetLongtitude,
+                          compass.heading);
+
+                      return Column(
+                        children: [
+                          Transform.rotate(
+                            angle: (newHeading * (math.pi / 180)),
+                            child: Icon(
+                              Icons.arrow_upward_rounded,
+                              size: MediaQuery.of(context).size.width - 80,
+                            ),
+                          ),
+                          Text(
+                              "Heading: ${compass.heading}\nAccuracy: ${compass.accuracy}"),
+                        ],
                       );
                     },
                   ),
-                  GPSText(),
+                  StreamBuilder<Position>(
+                    stream: LocationUtils.getContinuousLocation(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      }
+                      var position = snapshot.data;
+                      angleToTarget = bearingFromStartToEnd(position!.latitude,
+                          position.longitude, targetLatitude, targetLongtitude);
+                      startLatitude = position.latitude;
+                      startLongitude = position.longitude;
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Symbols.directions_run, size: 35),
+                          Text(
+                              "${Geolocator.distanceBetween(startLatitude, startLongitude, targetLatitude, targetLongtitude).toStringAsFixed(0)}m",
+                              style: TextStyle(fontSize: 30),
+                              textAlign: TextAlign.center),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: accuracyIcon(position.accuracy),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -121,7 +190,7 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
             return Text("Error: ${snapshot.error}");
           }
           var position = snapshot.data;
-          angleToTarget = Geolocator.bearingBetween(position!.latitude,
+          angleToTarget = bearingFromStartToEnd(position!.latitude,
               position.longitude, targetLatitude, targetLongtitude);
           startLatitude = position.latitude;
           startLongitude = position.longitude;
