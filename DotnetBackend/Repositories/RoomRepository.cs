@@ -51,28 +51,29 @@ public class RoomRepository(MySQLContext context)
             .ToListAsync();
     }
 
-   public async Task<List<PublicRoomDTO>> SearchNearbyRoomsAsync(string apiKey, Guid userId, double lat, double lon, double alt, string keyword, int limit = 10)
-{
-   /* return await context.Rooms.FromSqlInterpolated($@"
-        SELECT r.*, 
-               (6371 * ACOS(COS(RADIANS({lat})) * COS(RADIANS(r.Lat)) 
-               * COS(RADIANS(r.Lon) - RADIANS({lon})) + SIN(RADIANS({lat})) 
-                * SIN(RADIANS(r.Lat)))) AS Distance 
-        FROM rooms r
-        JOIN sites s ON r.SiteID = s.ID
-        JOIN UserSites us ON us.SiteID = s.ID
-        WHERE us.UserID = {BitConverter.ToString(userId.ToByteArray()).Replace("-","")}
-        AND r.Name LIKE CONCAT('%', {keyword}, '%')
-        ORDER BY Distance ASC
-        LIMIT {limit}") 
-    .Include(r => r.Site)
-    .Select(r => new PublicRoomDTO(r) 
+   public async Task<List<PublicRoomDTO>> SearchNearbyRoomsAsync(Guid userId, double lat, double lon, double alt, string keyword, int limit = 10)
     {
-        SiteName = r.Site.Name
-    })
-    .ToListAsync();*/
+        return await context.Rooms.FromSqlInterpolated($@"
+            SELECT r.*, 
+                (6371 * ACOS(COS(RADIANS({lat})) * COS(RADIANS(r.Lat)) 
+                * COS(RADIANS(r.Lon) - RADIANS({lon})) + SIN(RADIANS({lat})) 
+                    * SIN(RADIANS(r.Lat)))) AS Distance 
+            FROM rooms r
+            JOIN sites s ON r.SiteID = s.ID
+            LEFT JOIN UserSites us ON us.SiteID = s.ID 
+                AND s.IsPrivate = TRUE -- Only enforce UserID check when private
+            WHERE (s.IsPrivate = FALSE OR us.UserID = UUID_TO_BIN({BitConverter.ToString(userId.ToByteArray()).Replace("-","")}))
+            AND r.Name LIKE CONCAT('%', {keyword}, '%')
+            ORDER BY Distance ASC
+            LIMIT {limit}") 
+        .Include(r => r.Site)
+        .Select(r => new PublicRoomDTO(r) 
+        {
+            SiteName = r.Site.Name
+        })
+        .ToListAsync();
 
-    {
+        /*
         return await context.Rooms
         .FromSqlInterpolated($@"
             SELECT *, 
@@ -90,9 +91,7 @@ public class RoomRepository(MySQLContext context)
             SiteName = r.Site.Name
         })
         .ToListAsync();
-
+        */
     }
-
-}
 
 }

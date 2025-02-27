@@ -42,6 +42,7 @@ class _AddsitepageState extends State<Addsitepage> {
     isPrivate = addEditSite.isPrivate;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -310,7 +311,7 @@ class _AddsitepageState extends State<Addsitepage> {
 
                             if (autoLocation) {
                               position = await LocationUtils.getPreciseLocation();
-                              
+
                               latController.text = position.latitude.toString();
                               lonController.text = position.longitude.toString();
                               altController.text = position.altitude.toString();

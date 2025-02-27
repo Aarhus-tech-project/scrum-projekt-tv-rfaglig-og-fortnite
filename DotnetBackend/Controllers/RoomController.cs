@@ -37,7 +37,7 @@ public class RoomController(RoomRepository classroomRepository, ApiKeyService ap
         {
             if (!apiKeyService.ValidateApiKey(apiKey, out var user)) 
                 return Unauthorized("Unauthorized");
-            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(apiKey, user.ID, lat, lon, alt, keyword, limit);
+            var classrooms = await classroomRepository.SearchNearbyRoomsAsync(user.ID, lat, lon, alt, keyword, limit);
 
             if (classrooms == null)
                 return NotFound("No matching classrooms found");
