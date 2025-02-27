@@ -1,4 +1,4 @@
-import 'package:classroom_finder_app/AddSitePage.dart';
+import 'package:classroom_finder_app/AddEditSitePage.dart';
 import 'package:classroom_finder_app/ClassroomCompassPage.dart';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
@@ -21,6 +21,20 @@ class _SitesPageState extends State<SitesPage> {
     updateSites();
   }
 
+  void showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
   updateSites() async {
     try {
       var newMySites = await ApiService.getUserSites();
@@ -39,11 +53,9 @@ class _SitesPageState extends State<SitesPage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color.fromARGB(255, 96, 154, 253), 
           child: Icon(Icons.add, color: Colors.white,), 
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Addsitepage()),
-            );
+          onPressed: () async {
+            await Navigator.push(context,MaterialPageRoute(builder: (context) => Addsitepage()));
+            updateSites();
           }
         ),
 
@@ -84,16 +96,13 @@ class _SitesPageState extends State<SitesPage> {
                             ),
                             IconButton(
                               onPressed:() async {
-                                // Get the id of the site i want to edit.
-
-                                // Make a request to rest api to get the AddEditSiteDTO from the id
-                                AddEditSiteDTO site = await ApiService.GetEditSite(mySites[index].id);
-
-                                // Navigate to the AddSitePage and pass the AddEditSiteDTO.
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => Addsitepage(site: site)),
-                                );
+                                try {           
+                                  AddEditSiteDTO site = await ApiService.GetEditSite(mySites[index].id);
+                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Addsitepage(site: site)));
+                                  updateSites();
+                                } catch (e) {
+                                  showSnackBar(e.toString(), Colors.red);
+                                }
                               }, 
                               icon: Icon(Icons.edit)
                             )

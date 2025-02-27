@@ -89,6 +89,20 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
   }
 
   Padding ClassroomSearchItem(BuildContext context, int index) {
+    double distance = Geolocator.distanceBetween(
+      userLatitude,
+      userLongitude,
+      rooms[index].latitude,
+      rooms[index].longitude,
+    );
+
+    String distanceText;
+    if (distance >= 1000) {
+      distanceText = "${(distance / 1000).toStringAsFixed(1)}km";
+    } else {
+      distanceText = "${distance.toStringAsFixed(0)}m";
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
       child: SizedBox(
@@ -132,23 +146,33 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                 size: 25,
                 color: Colors.black,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    rooms[index].name,
-                    style: TextStyle(fontSize: 20, color: Colors.black),
-                  ),
-                  Text(
-                    rooms[index].siteName,
-                    style: TextStyle(fontSize: 12, color: Colors.black),
-                  )
-                ],
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        rooms[index].name,
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        rooms[index].siteName,
+                        style: TextStyle(fontSize: 12, color: Colors.black),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Text(
-                  "${Geolocator.distanceBetween(userLatitude, userLongitude, rooms[index].latitude, rooms[index].longitude).toStringAsFixed(0)}m",
-                  style: TextStyle(fontSize: 20, color: Colors.black)),
+                distanceText,
+                style: TextStyle(fontSize: 20, color: Colors.black),
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
