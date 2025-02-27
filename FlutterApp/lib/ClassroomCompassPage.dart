@@ -135,8 +135,6 @@ class _ClassroomCompassPageState extends State<ClassroomCompassPage> {
                               size: MediaQuery.of(context).size.width - 80,
                             ),
                           ),
-                          Text(
-                              "Heading: ${compass.heading}\nAccuracy: ${compass.accuracy}"),
                         ],
                       );
                     },
