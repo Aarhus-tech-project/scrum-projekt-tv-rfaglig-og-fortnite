@@ -2,6 +2,7 @@ import 'package:classroom_finder_app/ClassroomCompassPage.dart';
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:classroom_finder_app/Services/ApiServices.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SearchClassroomsPage extends StatefulWidget {
   const SearchClassroomsPage({super.key});
@@ -17,7 +18,21 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
   @override
   void initState() {
     super.initState();
+
     updateSearchClassrooms(searchController.text);
+  }
+
+  late double userLatitude = 0.0;
+  late double userLongitude = 0.0;
+
+  Future<void> _getUserLocation() async {
+    Position userPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {
+      userLatitude = userPosition.latitude;
+      userLongitude = userPosition.longitude;
+    });
   }
 
   @override
@@ -29,6 +44,7 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
   updateSearchClassrooms(String keyword) async {
     List<Room> newClassrooms =
         await ApiService.searchClassrooms(keyword: keyword);
+    _getUserLocation();
     setState(() {
       rooms = newClassrooms;
     });
@@ -130,7 +146,9 @@ class _SearchClassroomsPageState extends State<SearchClassroomsPage> {
                   )
                 ],
               ),
-              Text("10m", style: TextStyle(fontSize: 20, color: Colors.black)),
+              Text(
+                  "${Geolocator.distanceBetween(userLatitude, userLongitude, rooms[index].latitude, rooms[index].longitude).toStringAsFixed(0)}m",
+                  style: TextStyle(fontSize: 20, color: Colors.black)),
             ],
           ),
         ),
