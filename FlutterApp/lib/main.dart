@@ -49,7 +49,8 @@ class _MyAppState extends State<MyApp> {
               future: _isAuthenticated,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Scaffold(body: Center(child: CircularProgressIndicator()));
+                  return Scaffold(
+                      body: Center(child: CircularProgressIndicator()));
                 } else if (snapshot.hasData && snapshot.data == true) {
                   return MainPage();
                 } else {
@@ -84,9 +85,9 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     ApiService.setLogoutHandler(() {
-      if (!mounted) return; // ✅ Prevent async navigation issue
       print("Logging out...");
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoginRegisterPage()));
     });
   }
 
