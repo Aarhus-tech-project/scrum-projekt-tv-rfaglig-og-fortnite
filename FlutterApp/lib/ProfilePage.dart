@@ -1,10 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
+
+import 'LoginRegisterPage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -19,6 +18,11 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     user();
+    ApiService.setLogoutHandler(() {
+      print("Logging out...");
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoginRegisterPage()));
+    });
   }
 
   void user() async {
