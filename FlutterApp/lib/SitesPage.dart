@@ -89,7 +89,7 @@ class _SitesPageState extends State<SitesPage> {
                       elevation: 4, // Adds shadow for depth
                       color: Colors.blueAccent,
                       child: Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,9 +105,9 @@ class _SitesPageState extends State<SitesPage> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-
+                                              
                             SizedBox(height: 4), // Spacing
-
+                                              
                             // Room Count
                             Text(
                               '${site.roomCount} Room(s)',
@@ -116,9 +116,9 @@ class _SitesPageState extends State<SitesPage> {
                                 fontSize: 16,
                               ),
                             ),
-
+                                              
                             Spacer(), // Pushes the menu button to the bottom
-
+                                              
                             // Popup Menu (More actions)
                             Align(
                               alignment: Alignment.bottomRight,

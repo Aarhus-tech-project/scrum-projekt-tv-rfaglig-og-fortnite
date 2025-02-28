@@ -21,6 +21,8 @@ class ApiService {
   }
 
   static String getBaseUrl() {
+    return 'http://172.20.10.10/api';
+
     if (kDebugMode) {
       if (Platform.isAndroid) {
         return 'http://10.0.2.2:5126/api'; // Android emulator
