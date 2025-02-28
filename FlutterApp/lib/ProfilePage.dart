@@ -1,8 +1,9 @@
-
 import 'package:classroom_finder_app/Services/ApiKeyService.dart';
 import 'package:classroom_finder_app/Services/ApiKeyStorageService.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
+
+import 'LoginRegisterPage.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,6 +20,11 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     user();
+    ApiService.setLogoutHandler(() {
+      print("Logging out...");
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoginRegisterPage()));
+    });
   }
 
   void user() async {
@@ -108,15 +114,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  void deleteUser() async {
-    try {
-      String? apiKey = await ApiKeyStorageService.getApiToken();
-      ApiService.deleteUser(apiKey!);
-    } catch (e) {
-      print('error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,7 +199,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (confirmDelete != true) {
                   return;
                 }
-                deleteUser();
+                ApiService.deleteUser();
                 ApiService.onLogout?.call();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),

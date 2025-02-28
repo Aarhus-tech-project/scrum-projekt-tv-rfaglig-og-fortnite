@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
 import 'package:classroom_finder_app/Models/Room.dart';
 import 'package:classroom_finder_app/Models/Site.dart';
@@ -49,9 +50,11 @@ class ApiService {
     try {
       http.Response response;
       if (method == 'POST') {
-        response = await http.post(url, headers: headers, body: jsonEncode(body));
+        response =
+            await http.post(url, headers: headers, body: jsonEncode(body));
       } else if (method == 'PUT') {
-        response = await http.put(url, headers: headers, body: jsonEncode(body));
+        response =
+            await http.put(url, headers: headers, body: jsonEncode(body));
       } else if (method == 'GET') {
         response = await http.get(url, headers: headers);
       } else if (method == 'DELETE') {
@@ -78,27 +81,9 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteUser(String apiKey) async {
-    final url = Uri.parse('$baseUrl/auth/DeleteUser');
-    final headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'X-Api-Key': apiKey,
-    };
-
-    try {
-      final response = await http.delete(url, headers: headers);
-
-      if (response.statusCode == 200) {
-        print('User deleted successfully');
-        ApiKeyStorageService.deleteApiToken();
-      } else {
-        print('Failed to delete user: ${response.statusCode}');
-        print('Response body: ${response.body}');
-      }
-    } catch (e) {
-      print('HTTP Error: $e');
-      throw Exception('Request failed: $e');
-    }
+  static Future<void> deleteUser() async {
+    await sendRequest('auth/DeleteAccount',
+        method: 'DELETE', requiresAuth: true);
   }
 
   /// Registers a new user
@@ -131,8 +116,8 @@ class ApiService {
   }
 
   /// Fetches classrooms with optional keyword and limit
-  static Future<List<Room>> searchClassrooms({String keyword = '', int limit = 5}) async {
-
+  static Future<List<Room>> searchClassrooms(
+      {String keyword = '', int limit = 5}) async {
     final response = await sendRequest(
       'searchclassrooms?keyword=$keyword&limit=$limit',
       requiresAuth: true,
@@ -142,7 +127,6 @@ class ApiService {
   }
 
   static Future<List<Site>> getUserSites() async {
-
     final response = await sendRequest(
       'GetUserSites',
     );
@@ -151,11 +135,7 @@ class ApiService {
   }
 
   static Future AddSite(AddEditSiteDTO site) async {
-    await sendRequest(
-      'Site',
-      method: 'POST',
-      body: site.toJson()
-    );
+    await sendRequest('Site', method: 'POST', body: site.toJson());
   }
 
   static Future EditSite(AddEditSiteDTO site) async {
@@ -169,21 +149,18 @@ class ApiService {
   static Future DeleteSite(String siteID) async {
     await sendRequest(
       'Site?siteID=$siteID',
-      method: 'DELETE', 
+      method: 'DELETE',
     );
   }
 
   static Future<AddEditSiteDTO> GetEditSite(String siteID) async {
-    final response = await sendRequest(
-      'GetEditSite?siteID=$siteID'
-    );
+    final response = await sendRequest('GetEditSite?siteID=$siteID');
     final Map<String, dynamic> data = json.decode(response.body);
     return AddEditSiteDTO.fromJson(data);
   }
 
   static Future<List<Site>> getNearbySites(
       {double lat = 0, double lon = 0}) async {
-
     final response = await sendRequest(
       'GetNearbySites?lat=$lat&lon=$lon',
     );
