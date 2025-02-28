@@ -12,6 +12,21 @@ namespace DotnetBackend.Controllers;
 [Route("api")]
 public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyService) : Controller
 {
+
+    [HttpGet("GetEditSite")]
+    public async Task<IActionResult> GetEditSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid siteID)
+    {
+        if (!apiKeyService.ValidateApiKey(apiKey, out var user))
+            return Unauthorized("Unauthorized");
+        
+        if (await siteRepository.GetUserSiteRole(user.ID, siteID) != UserRole.Admin)
+            return Unauthorized("Unauthorized");
+
+        var editSite = await siteRepository.GetEditSiteAsync(siteID);
+
+        return Ok(editSite);
+    }
+
     [HttpGet("GetUserSites")]
     public async Task<IActionResult> GetSites([FromHeader(Name = "X-Api-Key")] string apiKey)
     {
@@ -21,6 +36,24 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         var sites = await siteRepository.GetPublicUserSites(user.Email);
         return Ok(sites);
 
+    }
+
+    [HttpGet("FindNearestSite")]
+    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
+    {
+        try
+        {
+            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
+
+            if (site == null)
+                return NotFound("No matching sites found");
+
+            return Ok(site.Select(s => new PublicSiteDTO(s)));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
     [HttpPost("Site")]
@@ -46,24 +79,6 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         }
     }
 
-    [HttpGet("FindNearestSite")]
-    public async Task<IActionResult> FindNearestSite([FromHeader(Name = "X-Api-Key")] string apiKey, double lat, double lon, double alt, string keyword  = "", int limit = 10)
-    {
-        try
-        {
-            var site = await siteRepository.FindNearestSite(apiKey, lat, lon, alt, keyword, limit);
-
-            if (site == null)
-                return NotFound("No matching sites found");
-
-            return Ok(site.Select(s => new PublicSiteDTO(s)));
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
-    }
-
     [HttpPut("Site")]
     public async Task<IActionResult> EditSite([FromHeader(Name = "X-Api-Key")] string apiKey, [FromBody] EditSiteDTO site)
     {
@@ -84,19 +99,7 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
         }
     }
 
-    [HttpGet("GetEditSite")]
-    public async Task<IActionResult> GetEditSite([FromHeader(Name = "X-Api-Key")] string apiKey, Guid siteID)
-    {
-        if (!apiKeyService.ValidateApiKey(apiKey, out var user))
-            return Unauthorized("Unauthorized");
-        
-        if (await siteRepository.GetUserSiteRole(user.ID, siteID) != UserRole.Admin)
-            return Unauthorized("Unauthorized");
 
-        var editSite = await siteRepository.GetEditSiteAsync(siteID);
-
-        return Ok(editSite);
-    }
 
     [HttpDelete("Site")]
     public async Task<IActionResult> Site([FromHeader(Name = "X-Api-Key")] string apiKey, Guid siteID)
