@@ -1,3 +1,5 @@
+
+import 'package:classroom_finder_app/ClassroomCompassPage.dart';
 import 'package:classroom_finder_app/Services/Apiservices.dart';
 import 'package:flutter/material.dart';
 import 'package:classroom_finder_app/Models/AddEditSiteDTO.dart';
@@ -38,6 +40,7 @@ class _AddsitepageState extends State<Addsitepage> {
     addressController.text = addEditSite.address;
     isPrivate = addEditSite.isPrivate;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +244,7 @@ class _AddsitepageState extends State<Addsitepage> {
     );
   }
 
-  void showAddEditRoomDialog(AddEditRoomDTO? room) {
+  void showAddEditRoomDialog(AddEditRoomDTO? room) async {
     TextEditingController nameController = TextEditingController();
     TextEditingController latController = TextEditingController();
     TextEditingController lonController = TextEditingController();
@@ -259,6 +262,13 @@ class _AddsitepageState extends State<Addsitepage> {
     lonController.text = room.lon.toString();
     altController.text = room.alt.toString();
     levelController.text = room.level.toString();
+
+    Position position = await LocationUtils.getPreciseLocation();
+    if (createNew) {
+      latController.text = position.latitude.toString();
+      lonController.text = position.longitude.toString();
+      altController.text = position.altitude.toString();
+    }
 
     showDialog(
       context: context,
@@ -283,6 +293,7 @@ class _AddsitepageState extends State<Addsitepage> {
                   SizedBox(height: 12),
                   TextField(
                     controller: levelController,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: "Floor",
                       hintText: "Enter Floor",
@@ -294,8 +305,16 @@ class _AddsitepageState extends State<Addsitepage> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          setDialogState(() {
+                          setDialogState(() async {
                             autoLocation = !autoLocation;
+
+                            if (autoLocation) {
+                              position = await LocationUtils.getPreciseLocation();
+
+                              latController.text = position.latitude.toString();
+                              lonController.text = position.longitude.toString();
+                              altController.text = position.altitude.toString();
+                            }
                           },);
                         },
                         icon: Icon(Icons.location_searching, color: autoLocation ? Colors.blue : Colors.white),
@@ -383,6 +402,7 @@ class _AddsitepageState extends State<Addsitepage> {
       },
     );
   }
+    
 
   Widget buildTextField(TextEditingController controller, String label, String hint) {
     return TextField(

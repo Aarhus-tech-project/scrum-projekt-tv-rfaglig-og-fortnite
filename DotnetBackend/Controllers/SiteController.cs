@@ -31,10 +31,13 @@ public class SiteController(SiteRepository siteRepository, ApiKeyService apiKeyS
 
         try
         {            
-            if (!site.Users.Contains(new AddEditUserSiteDTO(user.Email, UserRole.Admin))) 
+            if (!site.Users.Any(u => u.Email == user.Email && u.Role == UserRole.Admin))
+            {
                 site.Users.Add(new AddEditUserSiteDTO(user.Email, UserRole.Admin));
-                
+            }
+
             await siteRepository.AddSiteAsync(site);
+
             return Ok();
         }
         catch (Exception ex)

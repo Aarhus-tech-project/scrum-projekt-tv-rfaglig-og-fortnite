@@ -1,4 +1,3 @@
-import 'package:classroom_finder_app/Models/Site.dart';
 
 class Room {
   String name;
